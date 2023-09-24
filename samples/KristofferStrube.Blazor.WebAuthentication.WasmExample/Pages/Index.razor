@@ -6,6 +6,12 @@
 
 <h2>Blazor Web Authentication</h2>
 
+@if (!isSupported)
+{
+    <p>This browser feature is not support on your device.</p>
+    return;
+}
+
 <p>Here you can try create a credential from your device's native identification mechanism.</p>
 
 <button class="btn btn-success" @onclick="CreateCredential">Create Credentials</button>

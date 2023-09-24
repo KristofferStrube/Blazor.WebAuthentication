@@ -8,6 +8,7 @@ namespace KristofferStrube.Blazor.WebAuthentication.WasmExample.Pages;
 
 public partial class Index : ComponentBase
 {
+    private bool isSupported = false;
     private CredentialsContainer container = default!;
     private PublicKeyCredential? credential;
     private PublicKeyCredential? validatedCredential;
@@ -18,6 +19,8 @@ public partial class Index : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
+        isSupported = await CredentialsService.IsSupportedAsync();
+        if (!isSupported) return;
         container = await CredentialsService.GetCredentialsAsync();
     }
 
