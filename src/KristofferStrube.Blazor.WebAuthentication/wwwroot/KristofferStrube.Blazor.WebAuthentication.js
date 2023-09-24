@@ -1,0 +1,1 @@
+export function getAttribute(object, attribute) { return object[attribute]; }

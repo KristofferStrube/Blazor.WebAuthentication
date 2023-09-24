@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KristofferStrube.Blazor.CredentialManagement", "src\KristofferStrube.Blazor.CredentialManagement\KristofferStrube.Blazor.CredentialManagement.csproj", "{A0B974A9-0058-4DC7-AEFD-D1A4E4AA24FA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KristofferStrube.Blazor.WebAuthentication", "src\KristofferStrube.Blazor.WebAuthentication\KristofferStrube.Blazor.WebAuthentication.csproj", "{A696790A-5532-4C70-9FE0-57892698BDAF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KristofferStrube.Blazor.WebAuthentication.BlazorExample", "samples\KristofferStrube.Blazor.WebAuthentication.BlazorExample\KristofferStrube.Blazor.WebAuthentication.BlazorExample.csproj", "{9811E16F-3101-45B3-B3AA-304A1391F0A0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A0B974A9-0058-4DC7-AEFD-D1A4E4AA24FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0B974A9-0058-4DC7-AEFD-D1A4E4AA24FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0B974A9-0058-4DC7-AEFD-D1A4E4AA24FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0B974A9-0058-4DC7-AEFD-D1A4E4AA24FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A696790A-5532-4C70-9FE0-57892698BDAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A696790A-5532-4C70-9FE0-57892698BDAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A696790A-5532-4C70-9FE0-57892698BDAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A696790A-5532-4C70-9FE0-57892698BDAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9811E16F-3101-45B3-B3AA-304A1391F0A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9811E16F-3101-45B3-B3AA-304A1391F0A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9811E16F-3101-45B3-B3AA-304A1391F0A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9811E16F-3101-45B3-B3AA-304A1391F0A0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

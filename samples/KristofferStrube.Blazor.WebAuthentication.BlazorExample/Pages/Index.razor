@@ -1,0 +1,37 @@
+﻿@page "/"
+@using System.Security.Cryptography;
+@inject CredentialsService CredentialsService;
+
+<PageTitle>Blazor Web Authentication</PageTitle>
+
+<h2>Blazor Web Authentication</h2>
+
+<p>Here you can try create a credential from your device's native identification mechanism.</p>
+
+<button class="btn btn-success" @onclick="CreateCredential">Create Credentials</button>
+
+<br />
+<br />
+@if (credential is not null)
+{
+    <b>Type: </b> @type
+    <br />
+    <b>Id: </b> @id
+    <br />
+    <br />
+    <button class="btn btn-primary" @onclick="GetCredential">Request Credentials from Id</button>
+
+    @if (successfulGettingCredential is {} success)
+    {
+        <br />
+        <br />
+        <div class="rounded p-2 text-white @(success ? "bg-success": "bg-danger")">
+            @(success ? "You logged in and validated your credentials" : errorMessage ?? "You were not successful in logging on.")
+        </div>
+    }
+}
+else if (errorMessage is not null)
+{
+    <div class="rounded p-2 text-white bg-danger">@errorMessage</div>
+}
+
