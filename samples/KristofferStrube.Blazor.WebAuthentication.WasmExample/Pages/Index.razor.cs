@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace KristofferStrube.Blazor.WebAuthentication.BlazorExample.Pages;
+namespace KristofferStrube.Blazor.WebAuthentication.WasmExample.Pages;
 
 public partial class Index : ComponentBase
 {

@@ -1,5 +1,5 @@
 ﻿using KristofferStrube.Blazor.CredentialManagement;
-using KristofferStrube.Blazor.WebAuthentication.BlazorExample;
+using KristofferStrube.Blazor.WebAuthentication.WasmExample;
 using KristofferStrube.Blazor.WebIDL;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
