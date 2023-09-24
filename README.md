@@ -3,6 +3,11 @@ A Blazor wrapper for the [Web Authentication](https://www.w3.org/TR/webauthn-3/)
 
 The API specified ways to create and validate strong public-key-based credentials. It gets these credentials from the native authenticators of the devices. On Windows, that's Windows Hello; on iOS/macOS, that's Touch ID or Face ID; and on Android, that's face, fingerprint, or PIN authentication. This project implements a wrapper around the API for Blazor so that we can easily and safely work with native authentication methods from the browser.
 
+# Demo
+The sample project can be demoed at https://kristofferstrube.github.io/Blazor.WebAuthentication/
+
+On each page, you can find the corresponding code for the example in the top right corner.
+
 # Related articles
 This repository was built with inspiration and help from the following series of articles:
 
