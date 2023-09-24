@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KristofferStrube.Blazor.Cre
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KristofferStrube.Blazor.WebAuthentication", "src\KristofferStrube.Blazor.WebAuthentication\KristofferStrube.Blazor.WebAuthentication.csproj", "{A696790A-5532-4C70-9FE0-57892698BDAF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KristofferStrube.Blazor.WebAuthentication.BlazorExample", "samples\KristofferStrube.Blazor.WebAuthentication.BlazorExample\KristofferStrube.Blazor.WebAuthentication.BlazorExample.csproj", "{9811E16F-3101-45B3-B3AA-304A1391F0A0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KristofferStrube.Blazor.WebAuthentication.WasmExample", "samples\KristofferStrube.Blazor.WebAuthentication.WasmExample\KristofferStrube.Blazor.WebAuthentication.WasmExample.csproj", "{9811E16F-3101-45B3-B3AA-304A1391F0A0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
