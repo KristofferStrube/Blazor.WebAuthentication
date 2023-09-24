@@ -46,6 +46,11 @@ public partial class Index : ComponentBase
                     {
                         Type = PublicKeyCredentialType.PublicKey,
                         Alg = -257
+                    },
+                    new PublicKeyCredentialParameters()
+                    {
+                        Type = PublicKeyCredentialType.PublicKey,
+                        Alg = -7
                     }
                 ],
                 Timeout = 360000,
