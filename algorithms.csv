@@ -1,0 +1,82 @@
+Name,Value,Description,Capabilities,Change Controller,Reference,Recommended
+Reserved for Private Use,less than -65536,,,,[RFC9053],No
+Unassigned,-65536,,,,,
+RS1,-65535,RSASSA-PKCS1-v1_5 using SHA-1,[kty],IESG,[RFC8812][RFC9053],Deprecated
+A128CTR,-65534,AES-CTR w/ 128-bit key,[kty],IETF,[RFC9459],Deprecated
+A192CTR,-65533,AES-CTR w/ 192-bit key,[kty],IETF,[RFC9459],Deprecated
+A256CTR,-65532,AES-CTR w/ 256-bit key,[kty],IETF,[RFC9459],Deprecated
+A128CBC,-65531,AES-CBC w/ 128-bit key,[kty],IETF,[RFC9459],Deprecated
+A192CBC,-65530,AES-CBC w/ 192-bit key,[kty],IETF,[RFC9459],Deprecated
+A256CBC,-65529,AES-CBC w/ 256-bit key,[kty],IETF,[RFC9459],Deprecated
+Unassigned,-65528 to -261,,,,,
+WalnutDSA,-260,WalnutDSA signature,[kty],,[RFC9021][RFC9053],No
+RS512,-259,RSASSA-PKCS1-v1_5 using SHA-512,[kty],IESG,[RFC8812][RFC9053],No
+RS384,-258,RSASSA-PKCS1-v1_5 using SHA-384,[kty],IESG,[RFC8812][RFC9053],No
+RS256,-257,RSASSA-PKCS1-v1_5 using SHA-256,[kty],IESG,[RFC8812][RFC9053],No
+Unassigned,-256 to -48,,,,,
+ES256K,-47,ECDSA using secp256k1 curve and SHA-256,[kty],IESG,[RFC8812][RFC9053],No
+HSS-LMS,-46,HSS/LMS hash-based digital signature,[kty],,[RFC8778][RFC9053],Yes
+SHAKE256,-45,SHAKE-256 512-bit Hash Value,[kty],,[RFC9054][RFC9053],Yes
+SHA-512,-44,SHA-2 512-bit Hash,[kty],,[RFC9054][RFC9053],Yes
+SHA-384,-43,SHA-2 384-bit Hash,[kty],,[RFC9054][RFC9053],Yes
+RSAES-OAEP w/ SHA-512,-42,RSAES-OAEP w/ SHA-512,[kty],,[RFC8230][RFC9053],Yes
+RSAES-OAEP w/ SHA-256,-41,RSAES-OAEP w/ SHA-256,[kty],,[RFC8230][RFC9053],Yes
+RSAES-OAEP w/ RFC 8017 default parameters,-40,RSAES-OAEP w/ SHA-1,[kty],,[RFC8230][RFC9053],Yes
+PS512,-39,RSASSA-PSS w/ SHA-512,[kty],,[RFC8230][RFC9053],Yes
+PS384,-38,RSASSA-PSS w/ SHA-384,[kty],,[RFC8230][RFC9053],Yes
+PS256,-37,RSASSA-PSS w/ SHA-256,[kty],,[RFC8230][RFC9053],Yes
+ES512,-36,ECDSA w/ SHA-512,[kty],,[RFC9053],Yes
+ES384,-35,ECDSA w/ SHA-384,[kty],,[RFC9053],Yes
+ECDH-SS + A256KW,-34,ECDH SS w/ Concat KDF and AES Key Wrap w/ 256-bit key,[kty],,[RFC9053],Yes
+ECDH-SS + A192KW,-33,ECDH SS w/ Concat KDF and AES Key Wrap w/ 192-bit key,[kty],,[RFC9053],Yes
+ECDH-SS + A128KW,-32,ECDH SS w/ Concat KDF and AES Key Wrap w/ 128-bit key,[kty],,[RFC9053],Yes
+ECDH-ES + A256KW,-31,ECDH ES w/ Concat KDF and AES Key Wrap w/ 256-bit key,[kty],,[RFC9053],Yes
+ECDH-ES + A192KW,-30,ECDH ES w/ Concat KDF and AES Key Wrap w/ 192-bit key,[kty],,[RFC9053],Yes
+ECDH-ES + A128KW,-29,ECDH ES w/ Concat KDF and AES Key Wrap w/ 128-bit key,[kty],,[RFC9053],Yes
+ECDH-SS + HKDF-512,-28,ECDH SS w/ HKDF - generate key directly,[kty],,[RFC9053],Yes
+ECDH-SS + HKDF-256,-27,ECDH SS w/ HKDF - generate key directly,[kty],,[RFC9053],Yes
+ECDH-ES + HKDF-512,-26,ECDH ES w/ HKDF - generate key directly,[kty],,[RFC9053],Yes
+ECDH-ES + HKDF-256,-25,ECDH ES w/ HKDF - generate key directly,[kty],,[RFC9053],Yes
+Unassigned,-24 to -19,,,,,
+SHAKE128,-18,SHAKE-128 256-bit Hash Value,[kty],,[RFC9054][RFC9053],Yes
+SHA-512/256,-17,SHA-2 512-bit Hash truncated to 256-bits,[kty],,[RFC9054][RFC9053],Yes
+SHA-256,-16,SHA-2 256-bit Hash,[kty],,[RFC9054][RFC9053],Yes
+SHA-256/64,-15,SHA-2 256-bit Hash truncated to 64-bits,[kty],,[RFC9054][RFC9053],Filter Only
+SHA-1,-14,SHA-1 Hash,[kty],,[RFC9054][RFC9053],Filter Only
+direct+HKDF-AES-256,-13,Shared secret w/ AES-MAC 256-bit key,[kty],,[RFC9053],Yes
+direct+HKDF-AES-128,-12,Shared secret w/ AES-MAC 128-bit key,[kty],,[RFC9053],Yes
+direct+HKDF-SHA-512,-11,Shared secret w/ HKDF and SHA-512,[kty],,[RFC9053],Yes
+direct+HKDF-SHA-256,-10,Shared secret w/ HKDF and SHA-256,[kty],,[RFC9053],Yes
+Unassigned,-9,,,,,
+EdDSA,-8,EdDSA,[kty],,[RFC9053],Yes
+ES256,-7,ECDSA w/ SHA-256,[kty],,[RFC9053],Yes
+direct,-6,Direct use of CEK,[kty],,[RFC9053],Yes
+A256KW,-5,AES Key Wrap w/ 256-bit key,[kty],,[RFC9053],Yes
+A192KW,-4,AES Key Wrap w/ 192-bit key,[kty],,[RFC9053],Yes
+A128KW,-3,AES Key Wrap w/ 128-bit key,[kty],,[RFC9053],Yes
+Unassigned,-2 to -1,,,,,
+Reserved,0,,,,[RFC9053],No
+A128GCM,1,"AES-GCM mode w/ 128-bit key, 128-bit tag",[kty],,[RFC9053],Yes
+A192GCM,2,"AES-GCM mode w/ 192-bit key, 128-bit tag",[kty],,[RFC9053],Yes
+A256GCM,3,"AES-GCM mode w/ 256-bit key, 128-bit tag",[kty],,[RFC9053],Yes
+HMAC 256/64,4,HMAC w/ SHA-256 truncated to 64 bits,[kty],,[RFC9053],Yes
+HMAC 256/256,5,HMAC w/ SHA-256,[kty],,[RFC9053],Yes
+HMAC 384/384,6,HMAC w/ SHA-384,[kty],,[RFC9053],Yes
+HMAC 512/512,7,HMAC w/ SHA-512,[kty],,[RFC9053],Yes
+Unassigned,8-9,,,,,
+AES-CCM-16-64-128,10,"AES-CCM mode 128-bit key, 64-bit tag, 13-byte nonce",[kty],,[RFC9053],Yes
+AES-CCM-16-64-256,11,"AES-CCM mode 256-bit key, 64-bit tag, 13-byte nonce",[kty],,[RFC9053],Yes
+AES-CCM-64-64-128,12,"AES-CCM mode 128-bit key, 64-bit tag, 7-byte nonce",[kty],,[RFC9053],Yes
+AES-CCM-64-64-256,13,"AES-CCM mode 256-bit key, 64-bit tag, 7-byte nonce",[kty],,[RFC9053],Yes
+AES-MAC 128/64,14,"AES-MAC 128-bit key, 64-bit tag",[kty],,[RFC9053],Yes
+AES-MAC 256/64,15,"AES-MAC 256-bit key, 64-bit tag",[kty],,[RFC9053],Yes
+Unassigned,16-23,,,,,
+ChaCha20/Poly1305,24,"ChaCha20/Poly1305 w/ 256-bit key, 128-bit tag",[kty],,[RFC9053],Yes
+AES-MAC 128/128,25,"AES-MAC 128-bit key, 128-bit tag",[kty],,[RFC9053],Yes
+AES-MAC 256/128,26,"AES-MAC 256-bit key, 128-bit tag",[kty],,[RFC9053],Yes
+Unassigned,27-29,,,,,
+AES-CCM-16-128-128,30,"AES-CCM mode 128-bit key, 128-bit tag, 13-byte nonce",[kty],,[RFC9053],Yes
+AES-CCM-16-128-256,31,"AES-CCM mode 256-bit key, 128-bit tag, 13-byte nonce",[kty],,[RFC9053],Yes
+AES-CCM-64-128-128,32,"AES-CCM mode 128-bit key, 128-bit tag, 7-byte nonce",[kty],,[RFC9053],Yes
+AES-CCM-64-128-256,33,"AES-CCM mode 256-bit key, 128-bit tag, 7-byte nonce",[kty],,[RFC9053],Yes
+IV-GENERATION,34,For doing IV generation for symmetric algorithms.,,,[RFC9053],No

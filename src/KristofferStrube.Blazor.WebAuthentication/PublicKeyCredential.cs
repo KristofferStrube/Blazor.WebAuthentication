@@ -20,4 +20,22 @@ public class PublicKeyCredential : Credential
         IJSObjectReference helper = await webAuthenticationHelperTask.Value;
         return await helper.InvokeAsync<IJSObjectReference>("getAttribute", JSReference, "rawId");
     }
+
+    //public async Task<AuthenticatorResponse> GetResponseAsync()
+    //{
+    //    ValueReference responseAttribute = new ValueReference(JSRuntime, JSReference, "response");
+
+    //    responseAttribute.ValueMapper = new()
+    //    {
+    //        { "AuthenticatorAttestationResponse", async () => await AuthenticatorAttestationResponse.CreateAsync(JSRuntime, await responseAttribute.GetValueAsync<IJSObjectReference>()) }
+    //    };
+
+    //    object? result = await responseAttribute.GetValueAsync();
+    //    if (result is null)
+    //    {
+    //        throw new Exception();
+    //    }
+
+    //    return () as AuthenticatorResponse;
+    //}
 }

@@ -1,0 +1,1 @@
+dotnet run --project ./tools/KristofferStrube.Blazor.COSEGenerator/ algorithms.csv ./src/KristofferStrube.Blazor.WebAuthentication/COSEAlgorithms.cs KristofferStrube.Blazor.WebAuthentication
