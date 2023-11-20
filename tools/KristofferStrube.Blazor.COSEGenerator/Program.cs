@@ -24,6 +24,9 @@ reader.ReadLine();
 
 writer.WriteLine($"namespace {args[2]};");
 writer.WriteLine();
+writer.WriteLine("/// <summary>");
+writer.WriteLine("/// A COSEAlgorithmIdentifier's value is a number identifying a cryptographic algorithm.");
+writer.WriteLine("/// </summary>");
 writer.WriteLine("public enum COSEAlgorithm : long");
 writer.WriteLine("{");
 writer.Indent++;
@@ -42,7 +45,7 @@ while (reader.ReadLine() is { } line)
     string referenceList = lineSegments[5];
     string recommended = lineSegments[6];
     writer.WriteLine("/// <summary>");
-    writer.WriteLine($"/// {description}");
+    writer.WriteLine($"/// {description}<br />");
     writer.WriteLine($"/// {(recommended == "Yes" ? "This is recommended to use." : "This is not recommended to use.")}");
     writer.WriteLine("/// </summary>");
     if (referenceList.Length >= 3)
@@ -51,7 +54,7 @@ while (reader.ReadLine() is { } line)
         string[] references = referenceList[1..^1].Split("][");
         foreach(string reference in references)
         {
-            writer.WriteLine($"/// <see href=\"https://www.iana.org/go/{reference.ToLower()}\">See the reference for {reference}</see>.");
+            writer.WriteLine($"/// <see href=\"https://www.iana.org/go/{reference.ToLower()}\">See the reference for {reference}</see>.<br />");
         }
         writer.WriteLine("/// </remarks>");
     }
