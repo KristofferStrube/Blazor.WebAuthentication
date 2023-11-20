@@ -18,4 +18,16 @@ public class PublicKeyCredentialCreationOptions
 
     [JsonPropertyName("timeout")]
     public ulong Timeout { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [JsonPropertyName("hints")]
+    public string? Hints { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [JsonPropertyName("attestation")]
+    public string? Attestation { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [JsonPropertyName("attestationFormats")]
+    public string[]? AttestationFormats { get; set; }
 }

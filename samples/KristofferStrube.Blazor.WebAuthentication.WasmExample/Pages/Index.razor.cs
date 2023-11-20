@@ -53,10 +53,13 @@ public partial class Index : ComponentBase
                     new PublicKeyCredentialParameters()
                     {
                         Type = PublicKeyCredentialType.PublicKey,
-                        Alg = COSEAlgorithm.SHA_256
+                        Alg = COSEAlgorithm.RS256
                     }
                 ],
                 Timeout = 360000,
+                Hints = "client-device",
+                Attestation = "none",
+                AttestationFormats = ["tpm"]
             }
         };
 
