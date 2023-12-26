@@ -24,6 +24,16 @@
     <br />
     <b>Id: </b> @id
     <br />
+    @if (challenge is not null)
+    {
+        <b>Challenge: </b> @string.Join(", ", challenge.Select(b => $"{b:X2}"))
+        <br />
+    }
+    @if (publicKey is not null)
+    {
+        <b>Public Key: </b> @string.Join(", ", publicKey.Select(b => $"{b:X2}"))
+        <br />
+    }
     <br />
     <button class="btn btn-primary" @onclick="GetCredential">Request Credentials from Id</button>
 
@@ -34,6 +44,12 @@
         <div class="rounded p-2 text-white @(success ? "bg-success": "bg-danger")">
             @(success ? "You logged in and validated your credentials" : errorMessage ?? "You were not successful in logging on.")
         </div>
+        @if (signature is not null)
+        {
+            <b>Signature: </b> @string.Join(", ", signature.Select(b => $"{b:X2}"))
+            ;
+            <br />
+        }
     }
 }
 else if (errorMessage is not null)

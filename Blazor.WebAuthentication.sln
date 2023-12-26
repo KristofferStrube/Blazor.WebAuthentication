@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KristofferStrube.Blazor.Web
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KristofferStrube.Blazor.COSEGenerator", "tools\KristofferStrube.Blazor.COSEGenerator\KristofferStrube.Blazor.COSEGenerator.csproj", "{07B38904-3166-4DFF-A33B-3F87B782D73A}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KristofferStrube.Blazor.WebAuthentication.API", "samples\KristofferStrube.Blazor.WebAuthentication.API\KristofferStrube.Blazor.WebAuthentication.API.csproj", "{3D9BCDE2-25B6-44C0-B5E1-69BE72EB1A21}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{07B38904-3166-4DFF-A33B-3F87B782D73A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{07B38904-3166-4DFF-A33B-3F87B782D73A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{07B38904-3166-4DFF-A33B-3F87B782D73A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D9BCDE2-25B6-44C0-B5E1-69BE72EB1A21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D9BCDE2-25B6-44C0-B5E1-69BE72EB1A21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D9BCDE2-25B6-44C0-B5E1-69BE72EB1A21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D9BCDE2-25B6-44C0-B5E1-69BE72EB1A21}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

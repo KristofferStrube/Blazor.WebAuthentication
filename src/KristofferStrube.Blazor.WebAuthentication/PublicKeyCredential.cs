@@ -1,5 +1,6 @@
 ﻿using KristofferStrube.Blazor.CredentialManagement;
 using KristofferStrube.Blazor.WebAuthentication.Extensions;
+using KristofferStrube.Blazor.WebIDL;
 using Microsoft.JSInterop;
 
 namespace KristofferStrube.Blazor.WebAuthentication;
@@ -28,21 +29,9 @@ public class PublicKeyCredential : Credential
         return await helper.InvokeAsync<IJSObjectReference>("getAttribute", JSReference, "rawId");
     }
 
-    //public async Task<AuthenticatorResponse> GetResponseAsync()
-    //{
-    //    ValueReference responseAttribute = new ValueReference(JSRuntime, JSReference, "response");
-
-    //    responseAttribute.ValueMapper = new()
-    //    {
-    //        { "AuthenticatorAttestationResponse", async () => await AuthenticatorAttestationResponse.CreateAsync(JSRuntime, await responseAttribute.GetValueAsync<IJSObjectReference>()) }
-    //    };
-
-    //    object? result = await responseAttribute.GetValueAsync();
-    //    if (result is null)
-    //    {
-    //        throw new Exception();
-    //    }
-
-    //    return () as AuthenticatorResponse;
-    //}
+    public async Task<AuthenticatorResponse> GetResponseAsync()
+    {
+        ValueReference responseAttribute = new (JSRuntime, JSReference, "response");
+        return await AuthenticatorResponse.GetConcreteInstanceAsync(responseAttribute);
+    }
 }
