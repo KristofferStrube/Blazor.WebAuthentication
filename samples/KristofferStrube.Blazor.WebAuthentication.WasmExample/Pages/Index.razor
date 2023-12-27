@@ -15,7 +15,11 @@
 <p>
     Here you can try to register some credentials and validate them.
     <br />
-    <small>If you have registered some credentials for a username within 20 minutes then you can still validate it even after having refreshed this page as it is the server that remembers credentials.</small>
+    <small>
+        If you have registered some credentials for a username within 20 minutes then you can still validate it even after having refreshed this page as it is the server that remembers credentials.
+        <br />
+        Usernames are not reserved so you can register the same username on multiple devices and validate with either of them. It would of cause be limited who can register new devices for a username in a real use case.
+    </small>
 </p>
 
 <label for="username">Username</label>
@@ -28,7 +32,7 @@
 @if (publicKey is not null)
 {
     <b>Registered a user! 🎊</b>
-    <br/>
+    <br />
     <b>Public Key: </b> @string.Join(", ", publicKey.Select(b => $"{b:X2}"))
     <br />
 }

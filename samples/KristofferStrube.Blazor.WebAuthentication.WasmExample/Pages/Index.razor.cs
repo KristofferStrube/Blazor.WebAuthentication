@@ -35,8 +35,8 @@ public partial class Index : ComponentBase
 
     private async Task CreateCredential()
     {
-        byte[] userId = Encoding.ASCII.GetBytes("bob");
-        challenge = await WebAuthenticationClient.RegisterChallenge("bob");
+        byte[] userId = Encoding.ASCII.GetBytes(username);
+        challenge = await WebAuthenticationClient.RegisterChallenge(username);
         CredentialCreationOptions options = new()
         {
             PublicKey = new PublicKeyCredentialCreationOptions()
@@ -47,9 +47,9 @@ public partial class Index : ComponentBase
                 },
                 User = new PublicKeyCredentialUserEntity()
                 {
-                    Name = "bob",
+                    Name = username,
                     Id = userId,
-                    DisplayName = "Bob"
+                    DisplayName = username
                 },
                 Challenge = challenge,
                 PubKeyCredParams =
@@ -81,7 +81,7 @@ public partial class Index : ComponentBase
                 PublicKeyCredentialJSON registrationResponse = await credential.ToJSONAsync();
                 if (registrationResponse is RegistrationResponseJSON { } registration)
                 {
-                    await WebAuthenticationClient.Register("bob", registration);
+                    await WebAuthenticationClient.Register(username, registration);
                     publicKey = registration.Response.PublicKey is not null ? Convert.FromBase64String(registration.Response.PublicKey) : null;
                 }
             }
@@ -97,7 +97,7 @@ public partial class Index : ComponentBase
 
     private async Task GetCredential()
     {
-        ValidateCredentials? setup = await WebAuthenticationClient.ValidateChallenge("bob");
+        ValidateCredentials? setup = await WebAuthenticationClient.ValidateChallenge(username);
         if (setup is not { Challenge: { Length: > 0 } challenge, Credentials: { Count: > 0 } credentials })
         {
             errorMessage = "The user was not previously registered.";
@@ -134,7 +134,7 @@ public partial class Index : ComponentBase
                 PublicKeyCredentialJSON authenticationResponse = await validatedCredential.ToJSONAsync();
                 if (authenticationResponse is AuthenticationResponseJSON { } authentication)
                 {
-                    validated = await WebAuthenticationClient.Validate("bob", authentication);
+                    validated = await WebAuthenticationClient.Validate(username, authentication);
                 }
             }
 
