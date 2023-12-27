@@ -42,6 +42,7 @@ public static class WebAuthenticationAPI
 
     public static Ok<bool> Register(string userName, [FromBody] RegistrationResponseJSON registration)
     {
+        // TODO: Do actual integrity validation on registration.
         if (Credentials.TryGetValue(userName, out List<byte[]>? credentialList))
         {
             credentialList.Add(Convert.FromBase64String(registration.RawId));
@@ -73,6 +74,7 @@ public static class WebAuthenticationAPI
 
     public static Ok<bool> Validate(string userName, [FromBody] AuthenticationResponseJSON authentication)
     {
+        // TODO: Do integrity validation by comparing the existing challenge and the one signed.
         if (!PublicKeys.TryGetValue(authentication.RawId, out (COSEAlgorithm algorithm, byte[] key) publicKey))
         {
             return TypedResults.Ok(false);
