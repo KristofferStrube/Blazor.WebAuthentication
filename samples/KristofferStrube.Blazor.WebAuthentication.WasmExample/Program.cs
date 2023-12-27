@@ -3,6 +3,7 @@ using KristofferStrube.Blazor.WebAuthentication.WasmExample;
 using KristofferStrube.Blazor.WebIDL;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -10,20 +11,10 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
-if (builder.HostEnvironment.IsDevelopment())
+builder.Services.AddKeyedScoped(typeof(WebAuthenticationClient), (_, _) => new HttpClient
 {
-    _ = builder.Services.AddKeyedScoped(typeof(WebAuthenticationClient), (_, _) => new HttpClient
-    {
-        BaseAddress = new Uri("https://localhost:7259/WebAuthentication/")
-    });
-}
-else
-{
-    _ = builder.Services.AddKeyedScoped(typeof(WebAuthenticationClient), (_, _) => new HttpClient
-    {
-        BaseAddress = new Uri("https://kristoffer-strube.dk/API/WebAuthentication/")
-    });
-}
+    BaseAddress = new Uri(builder.HostEnvironment.IsDevelopment() ? "https://localhost:7259/WebAuthentication/" : "https://kristoffer-strube.dk/API/WebAuthentication/")
+});
 
 builder.Services.AddCredentialsService();
 

@@ -1,26 +1,24 @@
 using KristofferStrube.Blazor.CredentialManagement;
-using KristofferStrube.Blazor.WebIDL;
+using KristofferStrube.Blazor.WebAuthentication.JSONRepresentations;
 using KristofferStrube.Blazor.WebIDL.Exceptions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using System.Security.Cryptography;
 using System.Text;
+using static KristofferStrube.Blazor.WebAuthentication.WasmExample.WebAuthenticationClient;
 
 namespace KristofferStrube.Blazor.WebAuthentication.WasmExample.Pages;
 
 public partial class Index : ComponentBase
 {
     private bool isSupported = false;
+    private string username = "";
     private CredentialsContainer container = default!;
     private PublicKeyCredential? credential;
     private PublicKeyCredential? validatedCredential;
-    private bool? successfulGettingCredential = null;
-    private string? type;
-    private string? id;
+    private bool? validated = null;
     private string? errorMessage;
     private byte[]? challenge;
     private byte[]? publicKey;
-    private byte[]? signature;
 
     [Inject]
     public required IJSRuntime JSRuntime { get; set; }
@@ -38,8 +36,7 @@ public partial class Index : ComponentBase
     private async Task CreateCredential()
     {
         byte[] userId = Encoding.ASCII.GetBytes("bob");
-        //challenge = await WebAuthenticationClient.Register("bob");
-        challenge = RandomNumberGenerator.GetBytes(32);
+        challenge = await WebAuthenticationClient.RegisterChallenge("bob");
         CredentialCreationOptions options = new()
         {
             PublicKey = new PublicKeyCredentialCreationOptions()
@@ -79,43 +76,52 @@ public partial class Index : ComponentBase
         {
             credential = await container.CreateAsync(options) is { } c ? new PublicKeyCredential(c) : null;
 
-            AuthenticatorResponse registrationResponse = await credential.GetResponseAsync();
-            if (registrationResponse is AuthenticatorAttestationResponse { } registration)
+            if (credential is not null)
             {
-                IJSObjectReference rawBuffer = await registration.GetPublicKeyAsync();
-                IJSObjectReference uint8ArrayFromBuffer = await (await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/KristofferStrube.Blazor.WebIDL/KristofferStrube.Blazor.WebIDL.js")).InvokeAsync<IJSObjectReference>("constructUint8Array", rawBuffer);
-                Uint8Array uint8Array = await Uint8Array.CreateAsync(JSRuntime, uint8ArrayFromBuffer);
-                publicKey = await uint8Array.GetByteArrayAsync();
+                PublicKeyCredentialJSON registrationResponse = await credential.ToJSONAsync();
+                if (registrationResponse is RegistrationResponseJSON { } registration)
+                {
+                    await WebAuthenticationClient.Register("bob", registration);
+                    publicKey = registration.Response.PublicKey is not null ? Convert.FromBase64String(registration.Response.PublicKey) : null;
+                }
             }
+
+            errorMessage = null;
         }
         catch (DOMException exception)
         {
             errorMessage = $"{exception.Name}: \"{exception.Message}\"";
             credential = null;
         }
-        if (credential is not null)
-        {
-            type = await credential.GetTypeAsync();
-            id = await credential.GetIdAsync();
-        }
     }
 
     private async Task GetCredential()
     {
-        byte[] challenge = RandomNumberGenerator.GetBytes(32);
+        ValidateCredentials? setup = await WebAuthenticationClient.ValidateChallenge("bob");
+        if (setup is not { Challenge: { Length: > 0 } challenge, Credentials: { Count: > 0 } credentials })
+        {
+            errorMessage = "The user was not previously registered.";
+            return;
+        }
+        this.challenge = challenge;
+
+        List<PublicKeyCredentialDescriptor> allowCredentials = new(credentials.Count);
+        foreach (byte[] credential in credentials)
+        {
+            allowCredentials.Add(new PublicKeyCredentialDescriptor()
+                {
+                    Type = PublicKeyCredentialType.PublicKey,
+                    Id = await JSRuntime.InvokeAsync<IJSObjectReference>("buffer", credential)
+                });
+        }
+
         CredentialRequestOptions options = new()
         {
             PublicKey = new PublicKeyCredentialRequestOptions()
             {
                 Challenge = challenge,
                 Timeout = 360000,
-                AllowCredentials = [
-                    new PublicKeyCredentialDescriptor()
-                    {
-                        Type = PublicKeyCredentialType.PublicKey,
-                        Id = await credential!.GetRawIdAsync()
-                    }
-                ]
+                AllowCredentials = allowCredentials.ToArray()
             }
         };
 
@@ -125,25 +131,21 @@ public partial class Index : ComponentBase
 
             if (validatedCredential is not null)
             {
-                AuthenticatorResponse registrationResponse = await validatedCredential.GetResponseAsync();
-                if (registrationResponse is AuthenticatorAssertionResponse { } validation)
+                PublicKeyCredentialJSON authenticationResponse = await validatedCredential.ToJSONAsync();
+                if (authenticationResponse is AuthenticationResponseJSON { } authentication)
                 {
-                    IJSObjectReference rawBuffer = await validation.GetSignatureAsync();
-                    IJSObjectReference uint8ArrayFromBuffer = await (await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/KristofferStrube.Blazor.WebIDL/KristofferStrube.Blazor.WebIDL.js")).InvokeAsync<IJSObjectReference>("constructUint8Array", rawBuffer);
-                    Uint8Array uint8Array = await Uint8Array.CreateAsync(JSRuntime, uint8ArrayFromBuffer);
-                    signature = await uint8Array.GetByteArrayAsync();
+                    validated = await WebAuthenticationClient.Validate("bob", authentication);
                 }
             }
 
-
+            errorMessage = null;
         }
         catch (DOMException exception)
         {
             errorMessage = $"{exception.Name}: \"{exception.Message}\"";
             validatedCredential = null;
+            validated = false;
         }
-
-        successfulGettingCredential = validatedCredential is not null;
     }
 
 }

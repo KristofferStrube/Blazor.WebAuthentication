@@ -12,4 +12,8 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\KristofferStrube.Blazor.WebAuthentication\KristofferStrube.Blazor.WebAuthentication.csproj" />
+  </ItemGroup>
+
 </Project>

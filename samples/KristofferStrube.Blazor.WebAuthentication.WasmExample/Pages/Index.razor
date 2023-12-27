@@ -12,48 +12,47 @@
     return;
 }
 
-<p>Here you can try create a credential from your device's native identification mechanism.</p>
+<p>
+    Here you can try to register some credentials and validate them.
+    <br />
+    <small>If you have registered some credentials for a username within 20 minutes then you can still validate it even after having refreshed this page as it is the server that remembers credentials.</small>
+</p>
 
-<button class="btn btn-success" @onclick="CreateCredential">Create Credentials</button>
-
+<label for="username">Username</label>
+<input id="username" @bind=username />
 <br />
 <br />
-@if (credential is not null)
+<button class="btn btn-success" @onclick="CreateCredential">Register</button>
+
+<br />
+@if (publicKey is not null)
 {
-    <b>Type: </b> @type
+    <b>Registered a user! 🎊</b>
+    <br/>
+    <b>Public Key: </b> @string.Join(", ", publicKey.Select(b => $"{b:X2}"))
     <br />
-    <b>Id: </b> @id
+}
+@if (challenge is not null)
+{
     <br />
-    @if (challenge is not null)
-    {
-        <b>Challenge: </b> @string.Join(", ", challenge.Select(b => $"{b:X2}"))
-        <br />
-    }
-    @if (publicKey is not null)
-    {
-        <b>Public Key: </b> @string.Join(", ", publicKey.Select(b => $"{b:X2}"))
-        <br />
-    }
+    <b>Challenge: </b> @string.Join(", ", challenge.Select(b => $"{b:X2}"))
     <br />
-    <button class="btn btn-primary" @onclick="GetCredential">Request Credentials from Id</button>
+}
+<br />
+<button class="btn btn-primary" @onclick="GetCredential">Validate Credentials</button>
 
-    @if (successfulGettingCredential is {} success)
-    {
-        <br />
-        <br />
-        <div class="rounded p-2 text-white @(success ? "bg-success": "bg-danger")">
-            @(success ? "You logged in and validated your credentials" : errorMessage ?? "You were not successful in logging on.")
-        </div>
-        @if (signature is not null)
-        {
-            <b>Signature: </b> @string.Join(", ", signature.Select(b => $"{b:X2}"))
-            ;
-            <br />
-        }
-    }
+@if (validated is { } success)
+{
+    <br />
+    <br />
+    <div class="rounded p-2 text-white @(success ? "bg-success": "bg-danger")">
+        @(success ? "You logged in and validated your credentials" : errorMessage ?? "You were not successful in logging on.")
+    </div>
 }
 else if (errorMessage is not null)
 {
+    <br />
+    <br />
     <div class="rounded p-2 text-white bg-danger">@errorMessage</div>
 }
 

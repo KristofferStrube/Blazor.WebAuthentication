@@ -24,11 +24,7 @@ public abstract class AuthenticatorResponse : IJSWrapper
         };
 
         object? result = await authenticatorResponse.GetValueAsync();
-        if (result is IJSObjectReference)
-        {
-            return null!;
-        }
-        return (AuthenticatorResponse)result;
+        return result is IJSObjectReference or null ? null! : (AuthenticatorResponse)result;
     }
 
     protected AuthenticatorResponse(IJSRuntime jSRuntime, IJSObjectReference jSReference)
@@ -36,5 +32,20 @@ public abstract class AuthenticatorResponse : IJSWrapper
         JSRuntime = jSRuntime;
         JSReference = jSReference;
         webAuthenticationHelperTask = new(jSRuntime.GetHelperAsync);
+    }
+    public async Task<IJSObjectReference> GetClientDataJSONAsync()
+    {
+        IJSObjectReference helper = await webAuthenticationHelperTask.Value;
+        return await helper.InvokeAsync<IJSObjectReference>("getAttribute", JSReference, "clientDataJSON");
+    }
+    public async Task<byte[]> GetClientDataJSONAsArrayAsync()
+    {
+        IJSObjectReference helper = await webAuthenticationHelperTask.Value;
+        IJSObjectReference arrayBuffer = await helper.InvokeAsync<IJSObjectReference>("getAttribute", JSReference, "clientDataJSON");
+
+        IJSObjectReference webIDLHelper = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/KristofferStrube.Blazor.WebIDL/KristofferStrube.Blazor.WebIDL.js");
+        IJSObjectReference uint8ArrayFromBuffer = await webIDLHelper.InvokeAsync<IJSObjectReference>("constructUint8Array", arrayBuffer);
+        Uint8Array uint8Array = await Uint8Array.CreateAsync(JSRuntime, uint8ArrayFromBuffer);
+        return await uint8Array.GetByteArrayAsync();
     }
 }

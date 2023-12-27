@@ -1,5 +1,6 @@
 ﻿using KristofferStrube.Blazor.CredentialManagement;
 using KristofferStrube.Blazor.WebAuthentication.Extensions;
+using KristofferStrube.Blazor.WebAuthentication.JSONRepresentations;
 using KristofferStrube.Blazor.WebIDL;
 using Microsoft.JSInterop;
 
@@ -29,9 +30,61 @@ public class PublicKeyCredential : Credential
         return await helper.InvokeAsync<IJSObjectReference>("getAttribute", JSReference, "rawId");
     }
 
+    public async Task<byte[]> GetRawIdAsArrayAsync()
+    {
+        IJSObjectReference helper = await webAuthenticationHelperTask.Value;
+        IJSObjectReference arrayBuffer = await helper.InvokeAsync<IJSObjectReference>("getAttribute", JSReference, "rawId");
+
+        IJSObjectReference webIDLHelper = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/KristofferStrube.Blazor.WebIDL/KristofferStrube.Blazor.WebIDL.js");
+        IJSObjectReference uint8ArrayFromBuffer = await webIDLHelper.InvokeAsync<IJSObjectReference>("constructUint8Array", arrayBuffer);
+        Uint8Array uint8Array = await Uint8Array.CreateAsync(JSRuntime, uint8ArrayFromBuffer);
+        return await uint8Array.GetByteArrayAsync();
+    }
+
     public async Task<AuthenticatorResponse> GetResponseAsync()
     {
-        ValueReference responseAttribute = new (JSRuntime, JSReference, "response");
+        ValueReference responseAttribute = new(JSRuntime, JSReference, "response");
         return await AuthenticatorResponse.GetConcreteInstanceAsync(responseAttribute);
+    }
+
+    public async Task<PublicKeyCredentialJSON> ToJSONAsync()
+    {
+        AuthenticatorResponse response = await GetResponseAsync();
+        if (response is AuthenticatorAssertionResponse authenticatorAssertion)
+        {
+            return new AuthenticationResponseJSON()
+            {
+                Id = Convert.ToBase64String(await GetRawIdAsArrayAsync()),
+                RawId = Convert.ToBase64String(await GetRawIdAsArrayAsync()),
+                Response = new()
+                {
+                    ClientDataJSON = Convert.ToBase64String(await authenticatorAssertion.GetClientDataJSONAsArrayAsync()),
+                    AuthenticatorData = Convert.ToBase64String(await authenticatorAssertion.GetAuthenticatorDataAsArrayAsync()),
+                    Signature = Convert.ToBase64String(await authenticatorAssertion.GetSignatureAsArrayAsync()),
+                },
+                ClientExtensionResults = new(),
+                Type = "public-key"
+            };
+        }
+        else if (response is AuthenticatorAttestationResponse authenticatorAttestation)
+        {
+            return new RegistrationResponseJSON()
+            {
+                Id = Convert.ToBase64String(await GetRawIdAsArrayAsync()),
+                RawId = Convert.ToBase64String(await GetRawIdAsArrayAsync()),
+                Response = new()
+                {
+                    ClientDataJSON = Convert.ToBase64String(await authenticatorAttestation.GetClientDataJSONAsArrayAsync()),
+                    Transports = ["dummy data"],
+                    AuthenticatorData = Convert.ToBase64String(await authenticatorAttestation.GetAuthenticatorDataAsArrayAsync()),
+                    PublicKey = Convert.ToBase64String(await authenticatorAttestation.GetPublicKeyAsArrayAsync()),
+                    PublicKeyAlgorithm = (long)await authenticatorAttestation.GetPublicKeyAlgorithmAsync(),
+                    AttestationObject = "dummy data",
+                },
+                ClientExtensionResults = new(),
+                Type = "public-key"
+            };
+        }
+        return default!;
     }
 }
