@@ -89,6 +89,7 @@ public partial class Index : ComponentBase
             }
 
             errorMessage = null;
+            validated = null;
         }
         catch (DOMException exception)
         {
