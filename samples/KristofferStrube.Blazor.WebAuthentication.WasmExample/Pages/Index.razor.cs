@@ -104,6 +104,7 @@ public partial class Index : ComponentBase
         ValidateCredentials? setup = await WebAuthenticationClient.ValidateChallenge(username);
         if (setup is not { Challenge: { Length: > 0 } challenge, Credentials: { Count: > 0 } credentials })
         {
+            validated = null;
             errorMessage = "The user was not previously registered.";
             return;
         }
