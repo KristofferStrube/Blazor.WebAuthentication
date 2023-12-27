@@ -87,16 +87,23 @@ public static class WebAuthenticationAPI
     {
         if (publicKeyAlgorithm is COSEAlgorithm.ES256)
         {
-            var dsa = ECDsa.Create();
-            dsa.ImportSubjectPublicKeyInfo(publicKey, out _);
+            try
+            {
+                var dsa = ECDsa.Create();
+                dsa.ImportSubjectPublicKeyInfo(publicKey, out _);
 
-            var Hash = SHA256.Create();
+                var Hash = SHA256.Create();
 
-            byte[] hashedClientData = Hash.ComputeHash(Convert.FromBase64String(clientData));
+                byte[] hashedClientData = Hash.ComputeHash(Convert.FromBase64String(clientData));
 
-            bool result = dsa.VerifyData(Convert.FromBase64String(authenticatorData).Concat(hashedClientData).ToArray(), Convert.FromBase64String(signature), HashAlgorithmName.SHA256, DSASignatureFormat.Rfc3279DerSequence);
+                bool result = dsa.VerifyData(Convert.FromBase64String(authenticatorData).Concat(hashedClientData).ToArray(), Convert.FromBase64String(signature), HashAlgorithmName.SHA256, DSASignatureFormat.Rfc3279DerSequence);
 
-            return result;
+                return result;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
         else if (publicKeyAlgorithm is COSEAlgorithm.RS256)
         {
@@ -114,7 +121,7 @@ public static class WebAuthenticationAPI
 
                 return result;
             }
-            catch (CryptographicException)
+            catch (Exception)
             {
                 return false;
             }
