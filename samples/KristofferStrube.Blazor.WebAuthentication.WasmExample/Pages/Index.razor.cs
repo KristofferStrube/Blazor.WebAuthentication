@@ -35,6 +35,8 @@ public partial class Index : ComponentBase
 
     private async Task CreateCredential()
     {
+        if (username.Length == 0) username = "default";
+
         byte[] userId = Encoding.ASCII.GetBytes(username);
         challenge = await WebAuthenticationClient.RegisterChallenge(username);
         CredentialCreationOptions options = new()
@@ -97,6 +99,8 @@ public partial class Index : ComponentBase
 
     private async Task GetCredential()
     {
+        if (username.Length == 0) username = "default";
+
         ValidateCredentials? setup = await WebAuthenticationClient.ValidateChallenge(username);
         if (setup is not { Challenge: { Length: > 0 } challenge, Credentials: { Count: > 0 } credentials })
         {
