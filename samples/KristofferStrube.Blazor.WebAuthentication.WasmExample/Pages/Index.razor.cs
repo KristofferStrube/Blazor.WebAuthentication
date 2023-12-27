@@ -148,7 +148,7 @@ public partial class Index : ComponentBase
         {
             errorMessage = $"{exception.Name}: \"{exception.Message}\"";
             validatedCredential = null;
-            validated = false;
+            validated = null;
         }
     }
 
