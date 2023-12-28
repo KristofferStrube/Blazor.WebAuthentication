@@ -2,7 +2,7 @@
 
 if (args.Length != 3)
 {
-    throw new ArgumentException("There should be parsed 2 arguments to this program. The first should be a CSV file containing COSE algorithm descriptions, the second should be the destination to generate the C# file, and the third should be the namespace to use for the class.");
+    throw new ArgumentException("There should be parsed 3 arguments to this program. The first should be a CSV file containing COSE algorithm descriptions, the second should be the destination to generate the C# file, and the third should be the namespace to use for the class.");
 }
 
 using FileStream sourceStream = File.Open(args[0], FileMode.Open);
