@@ -11,7 +11,7 @@ public class AuthenticatorAttestationResponseJSON
     public required string AuthenticatorData { get; set; }
 
     [JsonPropertyName("transports")]
-    public required string[] Transports { get; set; }
+    public required AuthenticatorTransport[] Transports { get; set; }
 
     /// <remarks>
     /// The publicKey field will be missing if pubKeyCredParams was used to negotiate a public-key algorithm that the user agent doesn’t understand.

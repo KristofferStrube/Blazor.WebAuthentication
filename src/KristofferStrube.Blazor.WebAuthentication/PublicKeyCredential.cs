@@ -75,11 +75,11 @@ public class PublicKeyCredential : Credential
                 Response = new()
                 {
                     ClientDataJSON = Convert.ToBase64String(await authenticatorAttestation.GetClientDataJSONAsArrayAsync()),
-                    Transports = ["dummy data"],
+                    Transports = await authenticatorAttestation.GetTransportsAsync(),
                     AuthenticatorData = Convert.ToBase64String(await authenticatorAttestation.GetAuthenticatorDataAsArrayAsync()),
                     PublicKey = Convert.ToBase64String(await authenticatorAttestation.GetPublicKeyAsArrayAsync()),
                     PublicKeyAlgorithm = (long)await authenticatorAttestation.GetPublicKeyAlgorithmAsync(),
-                    AttestationObject = "dummy data",
+                    AttestationObject = Convert.ToBase64String(await authenticatorAttestation.GetAttestationObjectAsync()),
                 },
                 ClientExtensionResults = new(),
                 Type = "public-key"

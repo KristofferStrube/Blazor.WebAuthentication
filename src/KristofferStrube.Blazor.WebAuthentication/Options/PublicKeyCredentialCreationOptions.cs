@@ -23,9 +23,9 @@ public class PublicKeyCredentialCreationOptions
     [JsonPropertyName("hints")]
     public string? Hints { get; set; }
 
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     [JsonPropertyName("attestation")]
-    public string? Attestation { get; set; }
+    public AttestationConveyancePreference Attestation { get; set; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [JsonPropertyName("attestationFormats")]

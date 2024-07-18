@@ -3,7 +3,9 @@ using KristofferStrube.Blazor.WebAuthentication.JSONRepresentations;
 using KristofferStrube.Blazor.WebIDL.Exceptions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using System;
 using System.Text;
+using System.Threading.Channels;
 using static KristofferStrube.Blazor.WebAuthentication.WasmExample.WebAuthenticationClient;
 
 namespace KristofferStrube.Blazor.WebAuthentication.WasmExample.Pages;
@@ -39,6 +41,14 @@ public partial class Index : ComponentBase
 
         byte[] userId = Encoding.ASCII.GetBytes(username);
         challenge = await WebAuthenticationClient.RegisterChallenge(username);
+
+        if (challenge is null)
+        {
+            errorMessage = "Was not succesfull in registering a challenge before making credentials.";
+            credential = null;
+            return;
+        }
+
         CredentialCreationOptions options = new()
         {
             PublicKey = new PublicKeyCredentialCreationOptions()
@@ -69,7 +79,7 @@ public partial class Index : ComponentBase
                 ],
                 Timeout = 360000,
                 Hints = "client-device",
-                Attestation = "none",
+                Attestation = AttestationConveyancePreference.Direct,
                 AttestationFormats = ["tpm"]
             }
         };
@@ -83,8 +93,16 @@ public partial class Index : ComponentBase
                 PublicKeyCredentialJSON registrationResponse = await credential.ToJSONAsync();
                 if (registrationResponse is RegistrationResponseJSON { } registration)
                 {
-                    await WebAuthenticationClient.Register(username, registration);
-                    publicKey = registration.Response.PublicKey is not null ? Convert.FromBase64String(registration.Response.PublicKey) : null;
+                    bool succesfullyRegistered = await WebAuthenticationClient.Register(username, registration);
+                    if (succesfullyRegistered)
+                    {
+                        publicKey = registration.Response.PublicKey is not null ? Convert.FromBase64String(registration.Response.PublicKey) : null;
+                    }
+                    else
+                    {
+                        errorMessage = "Was not successfull in registering the credentials";
+                        credential = null;
+                    }
                 }
             }
 

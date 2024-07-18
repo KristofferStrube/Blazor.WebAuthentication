@@ -1,6 +1,7 @@
 ﻿using KristofferStrube.Blazor.WebAuthentication.JSONRepresentations;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using System.Formats.Cbor;
 using System.Security.Cryptography;
 
 namespace KristofferStrube.Blazor.WebAuthentication.API;
@@ -43,6 +44,37 @@ public static class WebAuthenticationAPI
     public static Ok<bool> Register(string userName, [FromBody] RegistrationResponseJSON registration)
     {
         // TODO: Do actual integrity validation on registration.
+        if (!Challenges.TryGetValue(userName, out byte[]? originalChallenge))
+        {
+            return TypedResults.Ok(false);
+        }
+
+        CborReader cborReader = new(Convert.FromBase64String(registration.Response.AttestationObject));
+        CborReaderState state = cborReader.PeekState();
+        Console.WriteLine(state);
+        int? mapSize = cborReader.ReadStartMap();
+        Console.WriteLine(mapSize);
+        state = cborReader.PeekState();
+        Console.WriteLine(state);
+        string fmt = cborReader.ReadTextString();
+        Console.WriteLine(fmt);
+        state = cborReader.PeekState();
+        Console.WriteLine(state);
+        string fmtType = cborReader.ReadTextString();
+        Console.WriteLine(fmtType);
+        state = cborReader.PeekState();
+        Console.WriteLine(state);
+        string attStmt = cborReader.ReadTextString();
+        Console.WriteLine(attStmt);
+        state = cborReader.PeekState();
+        Console.WriteLine(state);
+        Console.WriteLine(cborReader.ReadStartMap());
+        state = cborReader.PeekState();
+        Console.WriteLine(state);
+        _ = cborReader.ReadTextString();
+        Console.WriteLine(cborReader.PeekState());
+        Console.WriteLine((COSEAlgorithm)(-(long)cborReader.ReadCborNegativeIntegerRepresentation() - 1));
+
         if (Credentials.TryGetValue(userName, out List<byte[]>? credentialList))
         {
             credentialList.Add(Convert.FromBase64String(registration.RawId));
