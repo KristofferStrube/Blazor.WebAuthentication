@@ -7,7 +7,7 @@ public class WebAuthenticationClient
 {
     private readonly HttpClient httpClient;
 
-    public WebAuthenticationClient([FromKeyedServices(typeof(WebAuthenticationClient))]HttpClient httpClient)
+    public WebAuthenticationClient([FromKeyedServices(typeof(WebAuthenticationClient))] HttpClient httpClient)
     {
         this.httpClient = httpClient;
     }

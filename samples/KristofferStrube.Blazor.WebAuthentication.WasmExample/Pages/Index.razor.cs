@@ -3,9 +3,7 @@ using KristofferStrube.Blazor.WebAuthentication.JSONRepresentations;
 using KristofferStrube.Blazor.WebIDL.Exceptions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using System;
 using System.Text;
-using System.Threading.Channels;
 using static KristofferStrube.Blazor.WebAuthentication.WasmExample.WebAuthenticationClient;
 
 namespace KristofferStrube.Blazor.WebAuthentication.WasmExample.Pages;
@@ -31,13 +29,20 @@ public partial class Index : ComponentBase
     protected override async Task OnInitializedAsync()
     {
         isSupported = await CredentialsService.IsSupportedAsync();
-        if (!isSupported) return;
+        if (!isSupported)
+        {
+            return;
+        }
+
         container = await CredentialsService.GetCredentialsAsync();
     }
 
     private async Task CreateCredential()
     {
-        if (username.Length == 0) username = "default";
+        if (username.Length == 0)
+        {
+            username = "default";
+        }
 
         byte[] userId = Encoding.ASCII.GetBytes(username);
         challenge = await WebAuthenticationClient.RegisterChallenge(username);
@@ -119,7 +124,10 @@ public partial class Index : ComponentBase
 
     private async Task GetCredential()
     {
-        if (username.Length == 0) username = "default";
+        if (username.Length == 0)
+        {
+            username = "default";
+        }
 
         ValidateCredentials? setup = await WebAuthenticationClient.ValidateChallenge(username);
         if (setup is not { Challenge: { Length: > 0 } challenge, Credentials: { Count: > 0 } credentials })
@@ -134,10 +142,10 @@ public partial class Index : ComponentBase
         foreach (byte[] credential in credentials)
         {
             allowCredentials.Add(new PublicKeyCredentialDescriptor()
-                {
-                    Type = PublicKeyCredentialType.PublicKey,
-                    Id = await JSRuntime.InvokeAsync<IJSObjectReference>("buffer", credential)
-                });
+            {
+                Type = PublicKeyCredentialType.PublicKey,
+                Id = await JSRuntime.InvokeAsync<IJSObjectReference>("buffer", credential)
+            });
         }
 
         CredentialRequestOptions options = new()

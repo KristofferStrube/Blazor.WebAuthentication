@@ -2,11 +2,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
-using System.Formats.Cbor;
-using System.Net;
 using System.Security.Cryptography;
-using System.Text;
-using System.Web;
 
 namespace KristofferStrube.Blazor.WebAuthentication.API;
 
@@ -49,32 +45,32 @@ public static class WebAuthenticationAPI
     {
         CollectedClientData? clientData = System.Text.Json.JsonSerializer.Deserialize<CollectedClientData>(Convert.FromBase64String(registration.Response.ClientDataJSON));
         if (clientData is null)
+        {
             return TypedResults.Ok(false);
-
-        Console.WriteLine("0");
+        }
 
         if (!Challenges.TryGetValue(userName, out byte[]? originalChallenge)
             || !originalChallenge.SequenceEqual(WebEncoders.Base64UrlDecode(clientData.Challenge)))
+        {
             return TypedResults.Ok(false);
-
-        Console.WriteLine("1");
+        }
 
         if (registration.Response.PublicKey is null)
+        {
             return TypedResults.Ok(false);
-
-        Console.WriteLine("2");
+        }
 
         var attestationStatement = PackedAttestationFormat.ReadFromBase64EncodedAttestationStatement(registration.Response.AttestationObject);
 
         if (attestationStatement.Algorithm != (COSEAlgorithm)registration.Response.PublicKeyAlgorithm)
+        {
             return TypedResults.Ok(false);
-
-        Console.WriteLine("3");
+        }
 
         if (!VerifySignature(attestationStatement.Algorithm, Convert.FromBase64String(registration.Response.PublicKey), registration.Response.AuthenticatorData, registration.Response.ClientDataJSON, attestationStatement.Signature))
+        {
             return TypedResults.Ok(false);
-
-        Console.WriteLine("4");
+        }
 
         if (Credentials.TryGetValue(userName, out List<byte[]>? credentialList))
         {
@@ -96,7 +92,7 @@ public static class WebAuthenticationAPI
         }
         byte[] challenge = RandomNumberGenerator.GetBytes(32);
         Challenges[userName] = challenge;
-        return TypedResults.Ok<ValidateCredentials>(new (challenge, credentialList));
+        return TypedResults.Ok<ValidateCredentials>(new(challenge, credentialList));
     }
 
     public class ValidateCredentials(byte[] challenge, List<byte[]> credentials)
@@ -109,14 +105,20 @@ public static class WebAuthenticationAPI
     {
         CollectedClientData? clientData = System.Text.Json.JsonSerializer.Deserialize<CollectedClientData>(Convert.FromBase64String(authentication.Response.ClientDataJSON));
         if (clientData is null)
+        {
             return TypedResults.Ok(false);
+        }
 
         if (!Challenges.TryGetValue(userName, out byte[]? originalChallenge)
             || !originalChallenge.SequenceEqual(WebEncoders.Base64UrlDecode(clientData.Challenge)))
+        {
             return TypedResults.Ok(false);
+        }
 
         if (!PublicKeys.TryGetValue(authentication.RawId, out (COSEAlgorithm algorithm, byte[] key) publicKey))
+        {
             return TypedResults.Ok(false);
+        }
 
         return TypedResults.Ok(VerifySignature(publicKey.algorithm, publicKey.key, authentication.Response.AuthenticatorData, authentication.Response.ClientDataJSON, Convert.FromBase64String(authentication.Response.Signature)));
     }

@@ -52,7 +52,7 @@ while (reader.ReadLine() is { } line)
     {
         writer.WriteLine("/// <remarks>");
         string[] references = referenceList[1..^1].Split("][");
-        foreach(string reference in references)
+        foreach (string reference in references)
         {
             writer.WriteLine($"/// <see href=\"https://www.iana.org/go/{reference.ToLower()}\">See the reference for {reference}</see>.<br />");
         }

@@ -8,7 +8,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors(o => o.AddPolicy("default",
-    builder => 
+    builder =>
         builder.WithOrigins("https://localhost:7203",
             "https://kristofferstrube.github.io")
         .AllowAnyMethod()
