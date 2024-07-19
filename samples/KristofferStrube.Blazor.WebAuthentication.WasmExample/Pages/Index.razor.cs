@@ -102,6 +102,7 @@ public partial class Index : ComponentBase
                     {
                         errorMessage = "Was not successfull in registering the credentials";
                         credential = null;
+                        return;
                     }
                 }
             }

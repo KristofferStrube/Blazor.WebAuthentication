@@ -1,8 +1,12 @@
 ﻿using KristofferStrube.Blazor.WebAuthentication.JSONRepresentations;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using System.Formats.Cbor;
+using System.Net;
 using System.Security.Cryptography;
+using System.Text;
+using System.Web;
 
 namespace KristofferStrube.Blazor.WebAuthentication.API;
 
@@ -43,37 +47,34 @@ public static class WebAuthenticationAPI
 
     public static Ok<bool> Register(string userName, [FromBody] RegistrationResponseJSON registration)
     {
-        // TODO: Do actual integrity validation on registration.
-        if (!Challenges.TryGetValue(userName, out byte[]? originalChallenge))
-        {
+        CollectedClientData? clientData = System.Text.Json.JsonSerializer.Deserialize<CollectedClientData>(Convert.FromBase64String(registration.Response.ClientDataJSON));
+        if (clientData is null)
             return TypedResults.Ok(false);
-        }
 
-        CborReader cborReader = new(Convert.FromBase64String(registration.Response.AttestationObject));
-        CborReaderState state = cborReader.PeekState();
-        Console.WriteLine(state);
-        int? mapSize = cborReader.ReadStartMap();
-        Console.WriteLine(mapSize);
-        state = cborReader.PeekState();
-        Console.WriteLine(state);
-        string fmt = cborReader.ReadTextString();
-        Console.WriteLine(fmt);
-        state = cborReader.PeekState();
-        Console.WriteLine(state);
-        string fmtType = cborReader.ReadTextString();
-        Console.WriteLine(fmtType);
-        state = cborReader.PeekState();
-        Console.WriteLine(state);
-        string attStmt = cborReader.ReadTextString();
-        Console.WriteLine(attStmt);
-        state = cborReader.PeekState();
-        Console.WriteLine(state);
-        Console.WriteLine(cborReader.ReadStartMap());
-        state = cborReader.PeekState();
-        Console.WriteLine(state);
-        _ = cborReader.ReadTextString();
-        Console.WriteLine(cborReader.PeekState());
-        Console.WriteLine((COSEAlgorithm)(-(long)cborReader.ReadCborNegativeIntegerRepresentation() - 1));
+        Console.WriteLine("0");
+
+        if (!Challenges.TryGetValue(userName, out byte[]? originalChallenge)
+            || !originalChallenge.SequenceEqual(WebEncoders.Base64UrlDecode(clientData.Challenge)))
+            return TypedResults.Ok(false);
+
+        Console.WriteLine("1");
+
+        if (registration.Response.PublicKey is null)
+            return TypedResults.Ok(false);
+
+        Console.WriteLine("2");
+
+        var attestationStatement = PackedAttestationFormat.ReadFromBase64EncodedAttestationStatement(registration.Response.AttestationObject);
+
+        if (attestationStatement.Algorithm != (COSEAlgorithm)registration.Response.PublicKeyAlgorithm)
+            return TypedResults.Ok(false);
+
+        Console.WriteLine("3");
+
+        if (!VerifySignature(attestationStatement.Algorithm, Convert.FromBase64String(registration.Response.PublicKey), registration.Response.AuthenticatorData, registration.Response.ClientDataJSON, attestationStatement.Signature))
+            return TypedResults.Ok(false);
+
+        Console.WriteLine("4");
 
         if (Credentials.TryGetValue(userName, out List<byte[]>? credentialList))
         {
@@ -106,16 +107,21 @@ public static class WebAuthenticationAPI
 
     public static Ok<bool> Validate(string userName, [FromBody] AuthenticationResponseJSON authentication)
     {
-        // TODO: Do integrity validation by comparing the existing challenge and the one signed.
-        if (!PublicKeys.TryGetValue(authentication.RawId, out (COSEAlgorithm algorithm, byte[] key) publicKey))
-        {
+        CollectedClientData? clientData = System.Text.Json.JsonSerializer.Deserialize<CollectedClientData>(Convert.FromBase64String(authentication.Response.ClientDataJSON));
+        if (clientData is null)
             return TypedResults.Ok(false);
-        }
 
-        return TypedResults.Ok(VerifySignature(publicKey.algorithm, publicKey.key, authentication.Response.AuthenticatorData, authentication.Response.ClientDataJSON, authentication.Response.Signature));
+        if (!Challenges.TryGetValue(userName, out byte[]? originalChallenge)
+            || !originalChallenge.SequenceEqual(WebEncoders.Base64UrlDecode(clientData.Challenge)))
+            return TypedResults.Ok(false);
+
+        if (!PublicKeys.TryGetValue(authentication.RawId, out (COSEAlgorithm algorithm, byte[] key) publicKey))
+            return TypedResults.Ok(false);
+
+        return TypedResults.Ok(VerifySignature(publicKey.algorithm, publicKey.key, authentication.Response.AuthenticatorData, authentication.Response.ClientDataJSON, Convert.FromBase64String(authentication.Response.Signature)));
     }
 
-    public static bool VerifySignature(COSEAlgorithm publicKeyAlgorithm, byte[] publicKey, string authenticatorData, string clientData, string signature)
+    public static bool VerifySignature(COSEAlgorithm publicKeyAlgorithm, byte[] publicKey, string authenticatorData, string clientData, byte[] signature)
     {
         if (publicKeyAlgorithm is COSEAlgorithm.ES256)
         {
@@ -128,7 +134,7 @@ public static class WebAuthenticationAPI
 
                 byte[] hashedClientData = Hash.ComputeHash(Convert.FromBase64String(clientData));
 
-                bool result = dsa.VerifyData(Convert.FromBase64String(authenticatorData).Concat(hashedClientData).ToArray(), Convert.FromBase64String(signature), HashAlgorithmName.SHA256, DSASignatureFormat.Rfc3279DerSequence);
+                bool result = dsa.VerifyData(Convert.FromBase64String(authenticatorData).Concat(hashedClientData).ToArray(), signature, HashAlgorithmName.SHA256, DSASignatureFormat.Rfc3279DerSequence);
 
                 return result;
             }
@@ -149,7 +155,7 @@ public static class WebAuthenticationAPI
 
                 byte[] hashedClientData = Hash.ComputeHash(Convert.FromBase64String(clientData));
 
-                bool result = rsa.VerifyData(Convert.FromBase64String(authenticatorData).Concat(hashedClientData).ToArray(), Convert.FromBase64String(signature), HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+                bool result = rsa.VerifyData(Convert.FromBase64String(authenticatorData).Concat(hashedClientData).ToArray(), signature, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
 
                 return result;
             }
