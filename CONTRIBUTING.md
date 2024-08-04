@@ -2,7 +2,7 @@
 Contributing includes many different actions. It is not only writing code. Contributions like discussing solutions in open issues are easily as valuable as contributing code as we can then find the best solution with the perspective of multiple people.
 
 ## Bugs and feature requests
-If you find any bugs in the project or have requests for features, then please [Open a new Issue](https://github.com/KristofferStrube/Blazor.WebAudio/issues/new).
+If you find any bugs in the project or have requests for features, then please [Open a new Issue](https://github.com/KristofferStrube/Blazor.WebAuthentication/issues/new).
 
 ## Contributing Code and Samples
 Before you contribute to the project, you will need to get confirmation from the library author that the contribution is welcome.
