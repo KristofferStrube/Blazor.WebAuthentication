@@ -2,7 +2,6 @@ using KristofferStrube.Blazor.CredentialManagement;
 using KristofferStrube.Blazor.WebAuthentication.JSONRepresentations;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using System;
 using System.Text;
 using static KristofferStrube.Blazor.WebAuthentication.WasmExample.WebAuthenticationClient;
 
@@ -100,18 +99,7 @@ public partial class Index : ComponentBase
                 PublicKeyCredentialJSON registrationResponse = await credential.ToJSONAsync();
                 if (registrationResponse is RegistrationResponseJSON { } registration)
                 {
-                    bool succesfullyRegistered;
-
-                    try
-                    {
-                        succesfullyRegistered = await WebAuthenticationClient.Register(username, registration);
-                    }
-                    catch
-                    {
-                        Logger.LogInformation(System.Text.Json.JsonSerializer.Serialize(registration));
-                        throw;
-                    }
-
+                    bool succesfullyRegistered = await WebAuthenticationClient.Register(username, registration);
                     if (succesfullyRegistered)
                     {
                         publicKey = registration.Response.PublicKey is not null ? Convert.FromBase64String(registration.Response.PublicKey) : null;
