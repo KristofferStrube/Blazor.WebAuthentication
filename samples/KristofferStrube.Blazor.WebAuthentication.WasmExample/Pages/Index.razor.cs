@@ -21,6 +21,9 @@ public partial class Index : ComponentBase
     private byte[]? publicKey;
 
     [Inject]
+    ILogger<Index> Logger { get; set; }
+
+    [Inject]
     public required IJSRuntime JSRuntime { get; set; }
 
     [Inject]
@@ -39,39 +42,41 @@ public partial class Index : ComponentBase
 
     private async Task CreateCredential()
     {
-        if (username.Length == 0)
+        try
         {
-            username = "default";
-        }
-
-        byte[] userId = Encoding.ASCII.GetBytes(username);
-        challenge = await WebAuthenticationClient.RegisterChallenge(username);
-
-        if (challenge is null)
-        {
-            errorMessage = "Was not succesfull in registering a challenge before making credentials.";
-            credential = null;
-            return;
-        }
-
-        CredentialCreationOptions options = new()
-        {
-            PublicKey = new PublicKeyCredentialCreationOptions()
+            if (username.Length == 0)
             {
-                Rp = new PublicKeyCredentialRpEntity
+                username = "default";
+            }
+
+            byte[] userId = Encoding.ASCII.GetBytes(username);
+            challenge = await WebAuthenticationClient.RegisterChallenge(username);
+
+            if (challenge is null)
+            {
+                errorMessage = "Was not succesfull in registering a challenge before making credentials.";
+                credential = null;
+                return;
+            }
+
+            CredentialCreationOptions options = new()
+            {
+                PublicKey = new PublicKeyCredentialCreationOptions()
                 {
-                    Name = "Kristoffer Strube Consulting"
-                },
-                User = new PublicKeyCredentialUserEntity()
-                {
-                    Name = username,
-                    Id = userId,
-                    DisplayName = username
-                },
-                Challenge = challenge,
-                PubKeyCredParams =
-                [
-                    new PublicKeyCredentialParameters()
+                    Rp = new PublicKeyCredentialRpEntity
+                    {
+                        Name = "Kristoffer Strube Consulting"
+                    },
+                    User = new PublicKeyCredentialUserEntity()
+                    {
+                        Name = username,
+                        Id = userId,
+                        DisplayName = username
+                    },
+                    Challenge = challenge,
+                    PubKeyCredParams =
+                    [
+                        new PublicKeyCredentialParameters()
                     {
                         Type = PublicKeyCredentialType.PublicKey,
                         Alg = COSEAlgorithm.ES256
@@ -81,16 +86,13 @@ public partial class Index : ComponentBase
                         Type = PublicKeyCredentialType.PublicKey,
                         Alg = COSEAlgorithm.RS256
                     }
-                ],
-                Timeout = 360000,
-                Hints = "client-device",
-                Attestation = AttestationConveyancePreference.Direct,
-                AttestationFormats = ["tpm"]
-            }
-        };
-
-        try
-        {
+                    ],
+                    Timeout = 360000,
+                    Hints = "client-device",
+                    Attestation = AttestationConveyancePreference.Direct,
+                    AttestationFormats = ["tpm"]
+                }
+            };
             credential = await container.CreateAsync(options) is { } c ? new PublicKeyCredential(c) : null;
 
             if (credential is not null)
@@ -115,51 +117,52 @@ public partial class Index : ComponentBase
             errorMessage = null;
             validated = null;
         }
-        catch (DOMException exception)
+        catch (Exception exception)
         {
-            errorMessage = $"{exception.Name}: \"{exception.Message}\"";
+            errorMessage = $"{exception.GetType().Name}: \"{exception.Message}\"";
             credential = null;
+            Logger.LogError(exception, "Error during creation of credentials.");
         }
     }
 
     private async Task GetCredential()
     {
-        if (username.Length == 0)
-        {
-            username = "default";
-        }
-
-        ValidateCredentials? setup = await WebAuthenticationClient.ValidateChallenge(username);
-        if (setup is not { Challenge: { Length: > 0 } challenge, Credentials: { Count: > 0 } credentials })
-        {
-            validated = null;
-            errorMessage = "The user was not previously registered.";
-            return;
-        }
-        this.challenge = challenge;
-
-        List<PublicKeyCredentialDescriptor> allowCredentials = new(credentials.Count);
-        foreach (byte[] credential in credentials)
-        {
-            allowCredentials.Add(new PublicKeyCredentialDescriptor()
-            {
-                Type = PublicKeyCredentialType.PublicKey,
-                Id = await JSRuntime.InvokeAsync<IJSObjectReference>("buffer", credential)
-            });
-        }
-
-        CredentialRequestOptions options = new()
-        {
-            PublicKey = new PublicKeyCredentialRequestOptions()
-            {
-                Challenge = challenge,
-                Timeout = 360000,
-                AllowCredentials = allowCredentials.ToArray()
-            }
-        };
-
         try
         {
+            if (username.Length == 0)
+            {
+                username = "default";
+            }
+
+            ValidateCredentials? setup = await WebAuthenticationClient.ValidateChallenge(username);
+            if (setup is not { Challenge: { Length: > 0 } challenge, Credentials: { Count: > 0 } credentials })
+            {
+                validated = null;
+                errorMessage = "The user was not previously registered.";
+                return;
+            }
+            this.challenge = challenge;
+
+            List<PublicKeyCredentialDescriptor> allowCredentials = new(credentials.Count);
+            foreach (byte[] credential in credentials)
+            {
+                allowCredentials.Add(new PublicKeyCredentialDescriptor()
+                {
+                    Type = PublicKeyCredentialType.PublicKey,
+                    Id = await JSRuntime.InvokeAsync<IJSObjectReference>("buffer", credential)
+                });
+            }
+
+            CredentialRequestOptions options = new()
+            {
+                PublicKey = new PublicKeyCredentialRequestOptions()
+                {
+                    Challenge = challenge,
+                    Timeout = 360000,
+                    AllowCredentials = allowCredentials.ToArray()
+                }
+            };
+
             validatedCredential = await container.GetAsync(options) is { } c ? new PublicKeyCredential(c) : null;
 
             if (validatedCredential is not null)
@@ -173,11 +176,12 @@ public partial class Index : ComponentBase
 
             errorMessage = null;
         }
-        catch (DOMException exception)
+        catch (Exception exception)
         {
-            errorMessage = $"{exception.Name}: \"{exception.Message}\"";
+            errorMessage = $"{exception.GetType().Name}: \"{exception.Message}\"";
             validatedCredential = null;
             validated = null;
+            Logger.LogError(exception, "Error during validation of credentials.");
         }
     }
 

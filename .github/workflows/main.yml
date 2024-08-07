@@ -21,6 +21,21 @@ jobs:
             dotnet-version: '8.0.x'
             include-prerelease: true
 
+        # Settings for elmah.io
+        - name: Replace elmah.io API_KEY
+          uses: richardrigutins/replace-in-files@v2
+          with:
+            files: 'samples/KristofferStrube.Blazor.WebAuthentication.WasmExample/Program.cs'
+            search-text: '<API_KEY>'
+            replacement-text: '${{ secrets.ELMAH_IO_API_KEY }}'
+
+        - name: Replace elmah.io LOG_ID
+          uses: richardrigutins/replace-in-files@v2
+          with:
+            files: 'samples/KristofferStrube.Blazor.WebAuthentication.WasmExample/Program.cs'
+            search-text: '<LOG_ID>'
+            replacement-text: '${{ secrets.ELMAH_IO_LOG_ID }}'
+
         # Generate the website
         - name: Publish
           run: dotnet publish samples/KristofferStrube.Blazor.WebAuthentication.WasmExample/KristofferStrube.Blazor.WebAuthentication.WasmExample.csproj --configuration Release /p:EnvironmentName=Production --output build

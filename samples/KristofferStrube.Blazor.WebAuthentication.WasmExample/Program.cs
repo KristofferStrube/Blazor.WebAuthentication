@@ -1,4 +1,5 @@
-﻿using KristofferStrube.Blazor.CredentialManagement;
+﻿using Elmah.Io.Blazor.Wasm;
+using KristofferStrube.Blazor.CredentialManagement;
 using KristofferStrube.Blazor.WebAuthentication.WasmExample;
 using KristofferStrube.Blazor.WebIDL;
 using Microsoft.AspNetCore.Components.Web;
@@ -19,6 +20,13 @@ builder.Services.AddCredentialsService();
 
 // For communicating with the API.
 builder.Services.AddScoped<WebAuthenticationClient>();
+
+// Configuring elmah.io
+builder.Logging.AddElmahIo(options =>
+{
+    options.ApiKey = "<API_KEY>";
+    options.LogId = new Guid("<LOG_ID>");
+});
 
 WebAssemblyHost app = builder.Build();
 
