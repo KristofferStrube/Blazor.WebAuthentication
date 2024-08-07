@@ -1,6 +1,5 @@
 using KristofferStrube.Blazor.CredentialManagement;
 using KristofferStrube.Blazor.WebAuthentication.JSONRepresentations;
-using KristofferStrube.Blazor.WebIDL.Exceptions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System.Text;
