@@ -12,8 +12,10 @@ public class AuthenticatorTransportConverter : JsonConverter<AuthenticatorTransp
             "usb" => AuthenticatorTransport.Usb,
             "nfc" => AuthenticatorTransport.Nfc,
             "ble" => AuthenticatorTransport.Ble,
+            "smard-card" => AuthenticatorTransport.SmartCard,
+            "hybrid" => AuthenticatorTransport.Hybrid,
             "internal" => AuthenticatorTransport.Internal,
-            var value => throw new ArgumentException($"Value '{value}' was not a valid {nameof(PublicKeyCredentialType)}.")
+            var value => throw new ArgumentException($"Value '{value}' was not a valid {nameof(AuthenticatorTransport)}.")
         };
     }
 
@@ -24,8 +26,10 @@ public class AuthenticatorTransportConverter : JsonConverter<AuthenticatorTransp
             AuthenticatorTransport.Usb => "usb",
             AuthenticatorTransport.Nfc => "nfc",
             AuthenticatorTransport.Ble => "ble",
+            AuthenticatorTransport.SmartCard => "smard-card",
+            AuthenticatorTransport.Hybrid => "hybrid",
             AuthenticatorTransport.Internal => "internal",
-            _ => throw new ArgumentException($"Value '{value}' was not a valid {nameof(PublicKeyCredentialType)}.")
+            _ => throw new ArgumentException($"Value '{value}' was not a valid {nameof(AuthenticatorTransport)}.")
         });
     }
 }
