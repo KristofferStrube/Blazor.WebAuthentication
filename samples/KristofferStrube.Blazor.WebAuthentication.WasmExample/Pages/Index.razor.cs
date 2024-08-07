@@ -21,7 +21,7 @@ public partial class Index : ComponentBase
     private byte[]? publicKey;
 
     [Inject]
-    ILogger<Index> Logger { get; set; }
+    public required ILogger<Index> Logger { get; set; }
 
     [Inject]
     public required IJSRuntime JSRuntime { get; set; }
