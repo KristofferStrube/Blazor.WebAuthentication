@@ -108,10 +108,9 @@ public partial class Index : ComponentBase
                     }
                     catch
                     {
-                        Logger.LogInformation("User {username} tried to register with object {registration}", username, registration);
+                        Logger.LogInformation(System.Text.Json.JsonSerializer.Serialize(registration));
                         throw;
                     }
-
 
                     if (succesfullyRegistered)
                     {
