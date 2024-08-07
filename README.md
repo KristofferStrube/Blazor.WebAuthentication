@@ -10,6 +10,12 @@ The sample project can be demoed at https://kristofferstrube.github.io/Blazor.We
 
 On each page, you can find the corresponding code for the example in the top right corner.
 
+## Logging and monitoring
+For the demo, I use [elmah.io](https://elmah.io) for logging and monitoring. This helps me to debug errors that might occur on specific devices or under special circumstances. The use of Error Handling JSInterop from [Blazor.WebIDL](https://github.com/KristofferStrube/Blazor.WebIDL) combined with elmah.io makes this especially useful.
+
+
+elmah.io gives a free Small Business subscription to any OSS project. Read more about this here: [Open Source - Monitor your open source website for free](https://elmah.io/sponsorship/opensource/)
+
 # Related articles
 This repository was built with inspiration and help from the following series of articles:
 
