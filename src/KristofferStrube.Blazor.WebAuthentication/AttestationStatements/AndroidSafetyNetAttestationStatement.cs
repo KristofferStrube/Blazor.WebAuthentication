@@ -44,25 +44,25 @@ public class AndroidSafetyNetAttestationStatement : AttestationStatement
         int? mapSize = cborReader.ReadStartMap();
         if (mapSize is not 2)
         {
-            throw new FormatException($"Attestation Statement's packed format had '{mapSize}' entries but '2' was expected.");
+            throw new FormatException($"Attestation Statement's safety net format had '{mapSize}' entries but '2' was expected.");
         }
 
         state = cborReader.PeekState();
         if (state is not CborReaderState.TextString)
         {
-            throw new FormatException($"Attestation Statement's packed format's first key was of type '{state}' but '{CborReaderState.TextString}' was expected.");
+            throw new FormatException($"Attestation Statement's safety net format's first key was of type '{state}' but '{CborReaderState.TextString}' was expected.");
         }
 
         label = cborReader.ReadTextString();
         if (label is not "ver")
         {
-            throw new FormatException($"Attestation Statement's packed format's first key was '{label}' but 'ver' was expected.");
+            throw new FormatException($"Attestation Statement's safety net format's first key was '{label}' but 'ver' was expected.");
         }
 
         state = cborReader.PeekState();
-        if (state is not CborReaderState.NegativeInteger)
+        if (state is not CborReaderState.TextString)
         {
-            throw new FormatException($"Attestation Statement's packed format's 'ver' was of type '{state}' but '{CborReaderState.TextString}' was expected.");
+            throw new FormatException($"Attestation Statement's safety net format's 'ver' was of type '{state}' but '{CborReaderState.TextString}' was expected.");
         }
 
         string version = cborReader.ReadTextString();
