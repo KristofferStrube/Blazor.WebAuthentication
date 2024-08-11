@@ -17,10 +17,12 @@ public class WebAuthenticationClient
         return await httpClient.GetFromJsonAsync<byte[]>($"RegisterChallenge/{userName}");
     }
 
-    public async Task<bool> Register(string userName, RegistrationResponseJSON registrationResponse)
+    public async Task Register(string userName, RegistrationResponseJSON registrationResponse)
     {
         HttpResponseMessage result = await httpClient.PostAsJsonAsync($"Register/{userName}", registrationResponse);
-        return await result.Content.ReadFromJsonAsync<bool>();
+
+        if (!result.IsSuccessStatusCode)
+            throw new ArgumentException(await result.Content.ReadAsStringAsync());
     }
 
     public async Task<ValidateCredentials?> ValidateChallenge(string userName)

@@ -41,35 +41,54 @@ public static class WebAuthenticationAPI
         return TypedResults.Ok(challenge);
     }
 
-    public static Ok<bool> Register(string userName, [FromBody] RegistrationResponseJSON registration)
+    public static Results<Ok, BadRequest<string>> Register(string userName, [FromBody] RegistrationResponseJSON registration)
     {
         CollectedClientData? clientData = System.Text.Json.JsonSerializer.Deserialize<CollectedClientData>(Convert.FromBase64String(registration.Response.ClientDataJSON));
         if (clientData is null)
         {
-            return TypedResults.Ok(false);
+            return TypedResults.BadRequest("Client data was not present.");
         }
 
-        if (!Challenges.TryGetValue(userName, out byte[]? originalChallenge)
-            || !originalChallenge.SequenceEqual(WebEncoders.Base64UrlDecode(clientData.Challenge)))
+        if (!Challenges.TryGetValue(userName, out byte[]? originalChallenge))
         {
-            return TypedResults.Ok(false);
+            return TypedResults.BadRequest("Challenge did not exist.");
+        }
+
+        if (!originalChallenge.SequenceEqual(WebEncoders.Base64UrlDecode(clientData.Challenge)))
+        {
+            return TypedResults.BadRequest("Challenge did not match server side challenge.");
         }
 
         if (registration.Response.PublicKey is null)
         {
-            return TypedResults.Ok(false);
+            return TypedResults.BadRequest("Response did not have a public key.");
         }
 
-        var attestationStatement = PackedAttestationFormat.ReadFromBase64EncodedAttestationStatement(registration.Response.AttestationObject);
-
-        if (attestationStatement.Algorithm != (COSEAlgorithm)registration.Response.PublicKeyAlgorithm)
+        AttestationStatement? attestationStatement;
+        try
         {
-            return TypedResults.Ok(false);
+            attestationStatement = AttestationStatement.ReadFromBase64EncodedAttestationStatement(registration.Response.AttestationObject);
+        }
+        catch (Exception e)
+        {
+            return TypedResults.BadRequest($"Could not parse attestation statement: \"{e.Message}\"");
         }
 
-        if (!VerifySignature(attestationStatement.Algorithm, Convert.FromBase64String(registration.Response.PublicKey), registration.Response.AuthenticatorData, registration.Response.ClientDataJSON, attestationStatement.Signature))
+        switch (attestationStatement)
         {
-            return TypedResults.Ok(false);
+            case PackedAttestationStatement packed:
+                if (packed.Algorithm != (COSEAlgorithm)registration.Response.PublicKeyAlgorithm)
+                {
+                    return TypedResults.BadRequest("The algorithm specified int the packed attestation format did not match the algorithm specified in the response.");
+                }
+
+                if (!VerifySignature(packed.Algorithm, Convert.FromBase64String(registration.Response.PublicKey), registration.Response.AuthenticatorData, registration.Response.ClientDataJSON, packed.Signature))
+                {
+                    return TypedResults.BadRequest("Signature was not valid.");
+                }
+                break;
+            default:
+                return TypedResults.BadRequest($"Verification of signature was not implemented for type {attestationStatement?.GetType().Name}");
         }
 
         if (Credentials.TryGetValue(userName, out List<byte[]>? credentialList))
@@ -81,7 +100,7 @@ public static class WebAuthenticationAPI
             Credentials[userName] = [Convert.FromBase64String(registration.RawId)];
         }
         PublicKeys[registration.RawId] = ((COSEAlgorithm)registration.Response.PublicKeyAlgorithm, Convert.FromBase64String(registration.Response.PublicKey));
-        return TypedResults.Ok(true);
+        return TypedResults.Ok();
     }
 
     public static Ok<ValidateCredentials> ValidateChallenge(string userName)

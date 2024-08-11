@@ -1,10 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <PublishTrimmed>false</PublishTrimmed>
+    <UserSecretsId>5a4e5a29-3e55-4bf5-831a-e180c29758cc</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

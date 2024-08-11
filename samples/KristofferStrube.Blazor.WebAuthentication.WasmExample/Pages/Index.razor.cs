@@ -99,14 +99,14 @@ public partial class Index : ComponentBase
                 PublicKeyCredentialJSON registrationResponse = await credential.ToJSONAsync();
                 if (registrationResponse is RegistrationResponseJSON { } registration)
                 {
-                    bool succesfullyRegistered = await WebAuthenticationClient.Register(username, registration);
-                    if (succesfullyRegistered)
+                    try
                     {
+                        await WebAuthenticationClient.Register(username, registration);
                         publicKey = registration.Response.PublicKey is not null ? Convert.FromBase64String(registration.Response.PublicKey) : null;
                     }
-                    else
+                    catch (Exception e)
                     {
-                        errorMessage = "Was not successfull in registering the credentials";
+                        errorMessage = $"Was not successfull in registering the credentials. {e.Message}";
                         credential = null;
                         return;
                     }

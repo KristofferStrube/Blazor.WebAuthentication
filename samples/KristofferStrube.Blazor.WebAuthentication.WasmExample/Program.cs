@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
+
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
@@ -22,11 +23,23 @@ builder.Services.AddCredentialsService();
 builder.Services.AddScoped<WebAuthenticationClient>();
 
 // Configuring elmah.io
-builder.Logging.AddElmahIo(options =>
+if (builder.HostEnvironment.IsProduction())
 {
-    options.ApiKey = "<API_KEY>";
-    options.LogId = new Guid("<LOG_ID>");
-});
+    builder.Logging.AddElmahIo(options =>
+    {
+        options.ApiKey = "<API_KEY>";
+        options.LogId = new Guid("<LOG_ID>");
+    });
+}
+else
+{
+    IConfiguration elmahIoOptions = builder.Configuration.GetSection("ElmahIo");
+    builder.Logging.AddElmahIo(options =>
+    {
+        options.ApiKey = elmahIoOptions.GetValue<string>("ApiKey");
+        options.LogId = new Guid(elmahIoOptions.GetValue<string>("LogId"));
+    });
+}
 
 WebAssemblyHost app = builder.Build();
 

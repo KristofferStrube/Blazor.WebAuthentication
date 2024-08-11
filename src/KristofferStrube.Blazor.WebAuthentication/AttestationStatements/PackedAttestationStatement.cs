@@ -2,7 +2,13 @@
 
 namespace KristofferStrube.Blazor.WebAuthentication;
 
-public class PackedAttestationFormat
+/// <summary>
+/// This is a WebAuthn optimized attestation statement format.
+/// It uses a very compact but still extensible encoding method.
+/// It is implementable by authenticators with limited resources (e.g., secure elements).
+/// </summary>
+/// <remarks><see href="https://www.w3.org/TR/webauthn-3/#sctn-packed-attestation">See the API definition here</see>.</remarks>
+public class PackedAttestationStatement : AttestationStatement
 {
     /// <summary>
     /// The algorithm used to generate the attestation signature.
@@ -20,54 +26,15 @@ public class PackedAttestationFormat
     /// </summary>
     public byte[][]? X5c { get; set; }
 
-    public static PackedAttestationFormat ReadFromBase64EncodedAttestationStatement(string input)
+    internal static PackedAttestationStatement ReadAttestationStatement(CborReader cborReader)
     {
-        CborReader cborReader = new(Convert.FromBase64String(input));
-
         CborReaderState state = cborReader.PeekState();
-
-        if (state is not CborReaderState.StartMap)
-        {
-            throw new FormatException("Attestation Statement did not start with a map.");
-        }
-
-        int? mapSize = cborReader.ReadStartMap();
-        if (mapSize is not 3)
-        {
-            throw new FormatException($"Attestation Statement had '{mapSize}' entries in its first map but '3' was expected.");
-        }
-
-        state = cborReader.PeekState();
-        if (state is not CborReaderState.TextString)
-        {
-            throw new FormatException($"Attestation Statement's first key was of type '{state}' but '{CborReaderState.TextString}' was expected.");
-        }
-
-        string label = cborReader.ReadTextString();
-        if (label is not "fmt")
-        {
-            throw new FormatException($"Attestation Statement's first key was '{label}' but 'fmt' was expected.");
-        }
-
-        state = cborReader.PeekState();
-        if (state is not CborReaderState.TextString)
-        {
-            throw new FormatException($"Attestation Statement's first value was of type '{state}' but '{CborReaderState.TextString}' was expected.");
-        }
-
-        string fmt = cborReader.ReadTextString();
-        if (fmt is not "packed")
-        {
-            throw new FormatException($"Attestation Statement had format '{fmt}' but 'packed' was expected.");
-        }
-
-        state = cborReader.PeekState();
         if (state is not CborReaderState.TextString)
         {
             throw new FormatException($"Attestation Statement's second key was of type '{state}' but '{CborReaderState.TextString}' was expected.");
         }
 
-        label = cborReader.ReadTextString();
+        string label = cborReader.ReadTextString();
         if (label is not "attStmt")
         {
             throw new FormatException($"Attestation Statement's second key was '{label}' but 'attStmt' was expected.");
@@ -79,7 +46,7 @@ public class PackedAttestationFormat
             throw new FormatException($"Attestation Statement's 'attStmt' was of type '{state}' but '{CborReaderState.StartMap}' was expected.");
         }
 
-        mapSize = cborReader.ReadStartMap();
+        int? mapSize = cborReader.ReadStartMap();
         if (mapSize is not 2 or 3)
         {
             throw new FormatException($"Attestation Statement's packed format had '{mapSize}' entries but '2' or '3' was expected.");
