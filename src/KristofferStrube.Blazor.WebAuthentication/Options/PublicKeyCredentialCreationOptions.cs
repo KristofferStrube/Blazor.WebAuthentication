@@ -2,6 +2,10 @@
 
 namespace KristofferStrube.Blazor.WebAuthentication;
 
+/// <summary>
+/// The options specific to the public key of <see cref="CredentialCreationOptions"/>.
+/// </summary>
+/// <remarks><see href="https://www.w3.org/TR/webauthn-3/#dictdef-publickeycredentialcreationoptions">See the API definition here</see>.</remarks>
 public class PublicKeyCredentialCreationOptions
 {
     [JsonPropertyName("rp")]
@@ -27,7 +31,12 @@ public class PublicKeyCredentialCreationOptions
     [JsonPropertyName("attestation")]
     public AttestationConveyancePreference Attestation { get; set; }
 
+    /// <summary>
+    /// The Relying Party can use this optional member to specify a preference regarding the attestation statement format used by the authenticator.
+    /// Values are ordered from most preferable to least preferable.
+    /// This parameter is advisory and the authenticator and could use an attestation statement not enumerated in this parameter.
+    /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [JsonPropertyName("attestationFormats")]
-    public string[]? AttestationFormats { get; set; }
+    public AttestationFormat[]? AttestationFormats { get; set; }
 }

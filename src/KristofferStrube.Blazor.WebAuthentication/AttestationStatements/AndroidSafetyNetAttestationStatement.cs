@@ -70,19 +70,19 @@ public class AndroidSafetyNetAttestationStatement : AttestationStatement
         state = cborReader.PeekState();
         if (state is not CborReaderState.TextString)
         {
-            throw new FormatException($"Attestation Statement's packed format's second key was of type '{state}' but '{CborReaderState.TextString}' was expected.");
+            throw new FormatException($"Attestation Statement's safety net format's second key was of type '{state}' but '{CborReaderState.TextString}' was expected.");
         }
 
         label = cborReader.ReadTextString();
         if (label is not "response")
         {
-            throw new FormatException($"Attestation Statement's packed format's second key was '{label}' but 'response' was expected.");
+            throw new FormatException($"Attestation Statement's safety net format's second key was '{label}' but 'response' was expected.");
         }
 
         state = cborReader.PeekState();
         if (state is not CborReaderState.ByteString)
         {
-            throw new FormatException($"Attestation Statement's packed format's 'response' was of type '{state}' but '{CborReaderState.ByteString}' was expected.");
+            throw new FormatException($"Attestation Statement's safety net format's 'response' was of type '{state}' but '{CborReaderState.ByteString}' was expected.");
         }
 
         byte[] response = cborReader.ReadByteString();

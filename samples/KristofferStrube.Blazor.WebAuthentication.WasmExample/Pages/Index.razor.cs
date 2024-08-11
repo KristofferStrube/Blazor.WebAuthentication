@@ -89,7 +89,7 @@ public partial class Index : ComponentBase
                     Timeout = 360000,
                     Hints = "client-device",
                     Attestation = AttestationConveyancePreference.Direct,
-                    AttestationFormats = ["tpm"]
+                    AttestationFormats = [AttestationFormat.Packed, AttestationFormat.AndroidKey, AttestationFormat.AndroidSafetyNet, AttestationFormat.TPM]
                 }
             };
             credential = await container.CreateAsync(options) is { } c ? new PublicKeyCredential(c) : null;
