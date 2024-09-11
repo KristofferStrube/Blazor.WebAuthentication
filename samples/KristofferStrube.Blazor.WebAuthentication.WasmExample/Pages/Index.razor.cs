@@ -87,7 +87,7 @@ public partial class Index : ComponentBase
                     }
                     ],
                     Timeout = 360000,
-                    Hints = "client-device",
+                    Hints = ["client-device"],
                     Attestation = AttestationConveyancePreference.Direct,
                     AttestationFormats = [AttestationFormat.Packed, AttestationFormat.AndroidKey, AttestationFormat.AndroidSafetyNet, AttestationFormat.TPM]
                 }

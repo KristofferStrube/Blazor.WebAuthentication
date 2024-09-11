@@ -1,4 +1,5 @@
 ﻿using System.Formats.Cbor;
+using System.Text.Json.Serialization;
 
 namespace KristofferStrube.Blazor.WebAuthentication;
 
@@ -92,5 +93,11 @@ public class AndroidSafetyNetAttestationStatement : AttestationStatement
             Version = version,
             Response = response
         };
+    }
+
+    public class AttestationStatementValiditiy
+    {
+        [JsonPropertyName("nonce")]
+        public string Nonce { get; set; }
     }
 }

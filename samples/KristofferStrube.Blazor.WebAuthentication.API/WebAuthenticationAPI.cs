@@ -2,7 +2,11 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography;
+using System.Text;
+using System.Text.Json;
+using static KristofferStrube.Blazor.WebAuthentication.AndroidSafetyNetAttestationStatement;
 
 namespace KristofferStrube.Blazor.WebAuthentication.API;
 
@@ -43,7 +47,7 @@ public static class WebAuthenticationAPI
 
     public static Results<Ok, BadRequest<string>> Register(string userName, [FromBody] RegistrationResponseJSON registration)
     {
-        CollectedClientData? clientData = System.Text.Json.JsonSerializer.Deserialize<CollectedClientData>(Convert.FromBase64String(registration.Response.ClientDataJSON));
+        CollectedClientData? clientData = JsonSerializer.Deserialize<CollectedClientData>(Convert.FromBase64String(registration.Response.ClientDataJSON));
         if (clientData is null)
         {
             return TypedResults.BadRequest("Client data was not present.");
@@ -87,6 +91,23 @@ public static class WebAuthenticationAPI
                     return TypedResults.BadRequest("Signature was not valid.");
                 }
                 break;
+            case AndroidSafetyNetAttestationStatement androidSafetyNet:
+                string jwsResult = Encoding.UTF8.GetString(androidSafetyNet.Response);
+                string[] parts = jwsResult.Split(".");
+                string base64EncodedattestationStatementValiditiyJsonString = parts[1];
+                string attestationStatementValiditiyJsonString = Base64UrlEncoder.Decode(base64EncodedattestationStatementValiditiyJsonString);
+                AttestationStatementValiditiy attestationStatementValiditiy = JsonSerializer.Deserialize<AttestationStatementValiditiy>(attestationStatementValiditiyJsonString);
+
+                var concattedAuthenticatorAndClientData = Encoding.UTF8.GetBytes(registration.Response.AuthenticatorData).Concat(Encoding.UTF8.GetBytes(registration.Response.ClientDataJSON)).ToArray();
+
+                var hasher = SHA256.Create();
+                var hash = hasher.ComputeHash(concattedAuthenticatorAndClientData);
+                var base64EncodedHash = Convert.ToBase64String(hash);
+
+                if (base64EncodedHash != attestationStatementValiditiy.Nonce)
+                    return TypedResults.BadRequest($"Android SafetyNet nonce '{attestationStatementValiditiy.Nonce}' was not equal to hash '{base64EncodedHash}'. The full request was: {JsonSerializer.Serialize(registration)}");
+
+                break;
             default:
                 return TypedResults.BadRequest($"Verification of signature was not implemented for type {attestationStatement?.GetType().Name}");
         }
@@ -122,7 +143,7 @@ public static class WebAuthenticationAPI
 
     public static Ok<bool> Validate(string userName, [FromBody] AuthenticationResponseJSON authentication)
     {
-        CollectedClientData? clientData = System.Text.Json.JsonSerializer.Deserialize<CollectedClientData>(Convert.FromBase64String(authentication.Response.ClientDataJSON));
+        CollectedClientData? clientData = JsonSerializer.Deserialize<CollectedClientData>(Convert.FromBase64String(authentication.Response.ClientDataJSON));
         if (clientData is null)
         {
             return TypedResults.Ok(false);
