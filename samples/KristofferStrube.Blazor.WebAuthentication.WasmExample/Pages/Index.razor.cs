@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System;
 using System.Text;
+using System.Text.Json;
 using static KristofferStrube.Blazor.WebAuthentication.WasmExample.WebAuthenticationClient;
 
 namespace KristofferStrube.Blazor.WebAuthentication.WasmExample.Pages;
@@ -112,7 +113,7 @@ public partial class Index : ComponentBase
                     {
                         errorMessage = $"Was not successfull in registering the credentials. {e.Message}";
                         credential = null;
-                        Logger.LogWarning(e, "Error during creation of credentials. The registration was: {}.", registrationResponse);
+                        Logger.LogWarning(e, "Error during creation of credentials. The challenge was: {0}; The registration response was: {1};", string.Join(", ", challenge.Select(b => $"{b:X2}")), JsonSerializer.Serialize(registrationResponse));
                     }
                 }
             }
