@@ -2,6 +2,7 @@ using KristofferStrube.Blazor.CredentialManagement;
 using KristofferStrube.Blazor.WebAuthentication.JSONRepresentations;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using System;
 using System.Text;
 using static KristofferStrube.Blazor.WebAuthentication.WasmExample.WebAuthenticationClient;
 
@@ -89,9 +90,12 @@ public partial class Index : ComponentBase
                     Timeout = 360000,
                     Hints = ["client-device"],
                     Attestation = AttestationConveyancePreference.Direct,
-                    AttestationFormats = [AttestationFormat.Packed, AttestationFormat.AndroidKey, AttestationFormat.AndroidSafetyNet, AttestationFormat.TPM, AttestationFormat.Apple]
+                    AttestationFormats = [AttestationFormat.TPM]
                 }
             };
+
+            Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(options));
+
             credential = await container.CreateAsync(options) is { } c ? new PublicKeyCredential(c) : null;
 
             if (credential is not null)
@@ -108,7 +112,7 @@ public partial class Index : ComponentBase
                     {
                         errorMessage = $"Was not successfull in registering the credentials. {e.Message}";
                         credential = null;
-                        return;
+                        Logger.LogWarning(e, "Error during creation of credentials. The registration was: {}.", registrationResponse);
                     }
                 }
             }
