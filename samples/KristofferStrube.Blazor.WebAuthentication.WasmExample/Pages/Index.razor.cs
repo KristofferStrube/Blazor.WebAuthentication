@@ -91,11 +91,9 @@ public partial class Index : ComponentBase
                     Timeout = 360000,
                     Hints = ["client-device"],
                     Attestation = AttestationConveyancePreference.Direct,
-                    AttestationFormats = [AttestationFormat.TPM]
+                    AttestationFormats = [AttestationFormat.TPM, AttestationFormat.Packed, AttestationFormat.AndroidKey, AttestationFormat.AndroidSafetyNet, AttestationFormat.Apple]
                 }
             };
-
-            Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(options));
 
             credential = await container.CreateAsync(options) is { } c ? new PublicKeyCredential(c) : null;
 
