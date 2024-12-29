@@ -112,6 +112,7 @@ public partial class Index : ComponentBase
                         errorMessage = $"Was not successfull in registering the credentials. {e.Message}";
                         credential = null;
                         Logger.LogWarning(e, "Error during creation of credentials. The challenge was: {0}; The registration response was: {1};", string.Join(", ", challenge.Select(b => $"{b:X2}")), JsonSerializer.Serialize(registrationResponse));
+                        return;
                     }
                 }
             }
