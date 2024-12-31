@@ -114,7 +114,7 @@ public static class WebAuthenticationAPI
                 string attestationStatementValiditiyJsonString = Base64UrlEncoder.Decode(base64EncodedattestationStatementValiditiyJsonString);
                 AttestationStatementValiditiy attestationStatementValiditiy = JsonSerializer.Deserialize<AttestationStatementValiditiy>(attestationStatementValiditiyJsonString);
 
-                var concattedAuthenticatorAndClientData = Encoding.UTF8.GetBytes(registration.Response.AuthenticatorData).Concat(Encoding.UTF8.GetBytes(registration.Response.ClientDataJSON)).ToArray();
+                var concattedAuthenticatorAndClientData = Convert.FromBase64String(registration.Response.AuthenticatorData).Concat(Convert.FromBase64String(registration.Response.ClientDataJSON)).ToArray();
 
                 var hasher = SHA256.Create();
                 var hash = hasher.ComputeHash(concattedAuthenticatorAndClientData);
