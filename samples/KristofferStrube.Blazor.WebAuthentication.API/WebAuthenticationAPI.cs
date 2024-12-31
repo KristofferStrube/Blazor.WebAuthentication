@@ -96,7 +96,7 @@ public static class WebAuthenticationAPI
                 {
                     byte[] clientDataJSONBytes = Convert.FromBase64String(registration.Response.ClientDataJSON);
                     byte[] clientDataHash = SHA256.Create().ComputeHash(clientDataJSONBytes);
-                    bool verified = tPMAttestationStatement.Verify(Convert.FromBase64String(registration.Response.AuthenticatorData), registration.Response.ClientDataJSON)
+                    bool verified = tPMAttestationStatement.Verify(Convert.FromBase64String(registration.Response.AuthenticatorData), clientDataHash);
                     if (!verified)
                     {
                         return TypedResults.BadRequest("TPM Attestation could not be verified.");
