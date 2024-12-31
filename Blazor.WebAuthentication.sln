@@ -13,6 +13,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KristofferStrube.Blazor.COS
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KristofferStrube.Blazor.WebAuthentication.API", "samples\KristofferStrube.Blazor.WebAuthentication.API\KristofferStrube.Blazor.WebAuthentication.API.csproj", "{3D9BCDE2-25B6-44C0-B5E1-69BE72EB1A21}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KristofferStrube.Blazor.WebAuthentication.Tests", "tests\KristofferStrube.Blazor.WebAuthentication.Tests\KristofferStrube.Blazor.WebAuthentication.Tests.csproj", "{57B4F0FE-1BF0-90A2-83D8-40C9B663527F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,9 +43,16 @@ Global
 		{3D9BCDE2-25B6-44C0-B5E1-69BE72EB1A21}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D9BCDE2-25B6-44C0-B5E1-69BE72EB1A21}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D9BCDE2-25B6-44C0-B5E1-69BE72EB1A21}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57B4F0FE-1BF0-90A2-83D8-40C9B663527F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57B4F0FE-1BF0-90A2-83D8-40C9B663527F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57B4F0FE-1BF0-90A2-83D8-40C9B663527F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57B4F0FE-1BF0-90A2-83D8-40C9B663527F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{57B4F0FE-1BF0-90A2-83D8-40C9B663527F} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C5A804B0-F754-47DE-9F85-5E8A7C937AE1}

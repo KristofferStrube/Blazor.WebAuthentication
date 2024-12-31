@@ -91,6 +91,22 @@ public static class WebAuthenticationAPI
                     return TypedResults.BadRequest("Signature was not valid.");
                 }
                 break;
+            case TPMAttestationStatement tPMAttestationStatement:
+                try
+                {
+                    byte[] clientDataJSONBytes = Convert.FromBase64String(registration.Response.ClientDataJSON);
+                    byte[] clientDataHash = SHA256.Create().ComputeHash(clientDataJSONBytes);
+                    bool verified = tPMAttestationStatement.Verify(Convert.FromBase64String(registration.Response.AuthenticatorData), registration.Response.ClientDataJSON)
+                    if (!verified)
+                    {
+                        return TypedResults.BadRequest("TPM Attestation could not be verified.");
+                    }
+                }
+                catch
+                {
+                    return TypedResults.BadRequest("An error occurred while verifying TPM Attestation.");
+                }
+                break;
             case AndroidSafetyNetAttestationStatement androidSafetyNet:
                 string jwsResult = Encoding.UTF8.GetString(androidSafetyNet.Response);
                 string[] parts = jwsResult.Split(".");
@@ -108,6 +124,8 @@ public static class WebAuthenticationAPI
                     return TypedResults.BadRequest($"Android SafetyNet nonce '{attestationStatementValiditiy.Nonce}' was not equal to hash '{base64EncodedHash}'. The full request was: {JsonSerializer.Serialize(registration)}");
 
                 break;
+            case NoneAttestationStatement:
+                return TypedResults.BadRequest("Attestation format 'None' was received which indicates that the device did not support attestation.");
             default:
                 return TypedResults.BadRequest($"Verification of signature was not implemented for type {attestationStatement?.GetType().Name}");
         }

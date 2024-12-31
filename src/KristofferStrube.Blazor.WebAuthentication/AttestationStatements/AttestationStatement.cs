@@ -49,7 +49,9 @@ public abstract class AttestationStatement
         return fmt switch
         {
             "packed" => PackedAttestationStatement.ReadAttestationStatement(cborReader),
+            "tpm" => TPMAttestationStatement.ReadAttestationStatement(cborReader),
             "android-safetynet" => AndroidSafetyNetAttestationStatement.ReadAttestationStatement(cborReader),
+            "none" => new NoneAttestationStatement(),
             _ => throw new FormatException($"Attestation Statement had format '{fmt}' which was not supported.")
         };
     }
